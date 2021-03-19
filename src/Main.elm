@@ -6,6 +6,7 @@ module Main exposing (..)
 --   https://guide.elm-lang.org/architecture/buttons.html
 --
 
+import Basics exposing (modBy)
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
@@ -62,6 +63,14 @@ new_circle =
     { x = 10, y = 10 }
 
 
+image_width =
+    500
+
+
+image_height =
+    500
+
+
 position_delta : Int
 position_delta =
     50
@@ -71,16 +80,16 @@ update_circle : Circle -> Direction -> Circle
 update_circle c direction =
     case direction of
         North ->
-            { c | y = c.y + position_delta }
+            { c | y = modBy image_height (c.y + position_delta) }
 
         South ->
-            { c | y = c.y - position_delta }
+            { c | y = modBy image_height (c.y - position_delta) }
 
         East ->
-            { c | x = c.x + position_delta }
+            { c | x = modBy image_width (c.x + position_delta) }
 
         West ->
-            { c | x = c.x - position_delta }
+            { c | x = modBy image_width (c.x - position_delta) }
 
 
 
@@ -151,7 +160,7 @@ view model =
     div []
         [ button [ onClick Choose_direction ] [ text "+" ]
         , div [] [ text model.display_text ]
-        , svg [ width "500", height "500", viewBox "0 0 500 500" ] (pixels model)
+        , svg [ width (String.fromInt image_width), height (String.fromInt image_height), viewBox (String.join "" [ "0", "0", String.fromInt image_width, String.fromInt image_height ]) ] (pixels model)
         ]
 
 

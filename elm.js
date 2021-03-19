@@ -5463,6 +5463,9 @@ var $elm$core$List$repeat = F2(
 		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
 	});
 var $author$project$Main$new_circle = {x: 10, y: 10};
+var $author$project$Main$image_height = 500;
+var $author$project$Main$image_width = 500;
+var $elm$core$Basics$modBy = _Basics_modBy;
 var $author$project$Main$position_delta = 50;
 var $author$project$Main$update_circle = F2(
 	function (c, direction) {
@@ -5470,19 +5473,27 @@ var $author$project$Main$update_circle = F2(
 			case 'North':
 				return _Utils_update(
 					c,
-					{y: c.y + $author$project$Main$position_delta});
+					{
+						y: A2($elm$core$Basics$modBy, $author$project$Main$image_height, c.y + $author$project$Main$position_delta)
+					});
 			case 'South':
 				return _Utils_update(
 					c,
-					{y: c.y - $author$project$Main$position_delta});
+					{
+						y: A2($elm$core$Basics$modBy, $author$project$Main$image_height, c.y - $author$project$Main$position_delta)
+					});
 			case 'East':
 				return _Utils_update(
 					c,
-					{x: c.x + $author$project$Main$position_delta});
+					{
+						x: A2($elm$core$Basics$modBy, $author$project$Main$image_width, c.x + $author$project$Main$position_delta)
+					});
 			default:
 				return _Utils_update(
 					c,
-					{x: c.x - $author$project$Main$position_delta});
+					{
+						x: A2($elm$core$Basics$modBy, $author$project$Main$image_width, c.x - $author$project$Main$position_delta)
+					});
 		}
 	});
 var $author$project$Main$step = F2(
@@ -5608,9 +5619,21 @@ var $author$project$Main$view = function (model) {
 				$elm$svg$Svg$svg,
 				_List_fromArray(
 					[
-						$elm$svg$Svg$Attributes$width('500'),
-						$elm$svg$Svg$Attributes$height('500'),
-						$elm$svg$Svg$Attributes$viewBox('0 0 500 500')
+						$elm$svg$Svg$Attributes$width(
+						$elm$core$String$fromInt($author$project$Main$image_width)),
+						$elm$svg$Svg$Attributes$height(
+						$elm$core$String$fromInt($author$project$Main$image_height)),
+						$elm$svg$Svg$Attributes$viewBox(
+						A2(
+							$elm$core$String$join,
+							'',
+							_List_fromArray(
+								[
+									'0',
+									'0',
+									$elm$core$String$fromInt($author$project$Main$image_width),
+									$elm$core$String$fromInt($author$project$Main$image_height)
+								])))
 					]),
 				$author$project$Main$pixels(model))
 			]));
