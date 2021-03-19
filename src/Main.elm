@@ -62,20 +62,25 @@ new_circle =
     { x = 10, y = 10 }
 
 
+position_delta : Int
+position_delta =
+    50
+
+
 update_circle : Circle -> Direction -> Circle
 update_circle c direction =
     case direction of
         North ->
-            { c | y = c.y + 1 }
+            { c | y = c.y + position_delta }
 
         South ->
-            { c | y = c.y - 1 }
+            { c | y = c.y - position_delta }
 
         East ->
-            { c | x = c.x + 1 }
+            { c | x = c.x + position_delta }
 
         West ->
-            { c | x = c.x - 1 }
+            { c | x = c.x - position_delta }
 
 
 
@@ -83,12 +88,14 @@ update_circle c direction =
 
 
 type alias Model =
-    { circles : List Circle }
+    { circles : List Circle
+    , display_text : String
+    }
 
 
 init : () -> ( Model, Cmd Msg )
 init () =
-    ( { circles = [] }, Cmd.none )
+    ( { circles = [], display_text = "" }, Cmd.none )
 
 
 
@@ -98,16 +105,17 @@ init () =
 type Msg
     = Choose_direction
     | Step Direction
+    | Print_foo
 
 
 step : Model -> Direction -> Model
 step model direction =
     case model.circles of
         [] ->
-            { circles = [ new_circle ] }
+            { model | circles = [ new_circle ] }
 
         (hd :: _) as circles ->
-            { circles = update_circle hd direction :: circles }
+            { model | circles = update_circle hd direction :: circles }
 
 
 
@@ -125,6 +133,9 @@ update msg model =
         Choose_direction ->
             ( model, Random.generate Step random_direction )
 
+        Print_foo ->
+            ( { model | display_text = model.display_text ++ " HI! " }, Cmd.none )
+
 
 
 -- VIEW
@@ -138,10 +149,9 @@ view_circle c =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Choose_direction ] [ text "+" ]
-
-        -- , div [] [ text (String.fromInt model) ]
-        , svg [ width "300", height "300", viewBox "0 0 300 300" ] (pixels model)
+        [ button [ onClick Choose_direction, onClick Print_foo ] [ text "+" ]
+        , div [] [ text model.display_text ]
+        , svg [ width "500", height "500", viewBox "0 0 500 500" ] (pixels model)
         ]
 
 

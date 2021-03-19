@@ -5231,7 +5231,7 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		{circles: _List_Nil},
+		{circles: _List_Nil, display_text: ''},
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -5442,60 +5442,73 @@ var $author$project$Main$random_direction = A2(
 	_List_fromArray(
 		[$author$project$Main$South, $author$project$Main$East, $author$project$Main$West]));
 var $author$project$Main$new_circle = {x: 10, y: 10};
+var $author$project$Main$position_delta = 50;
 var $author$project$Main$update_circle = F2(
 	function (c, direction) {
 		switch (direction.$) {
 			case 'North':
 				return _Utils_update(
 					c,
-					{y: c.y + 1});
+					{y: c.y + $author$project$Main$position_delta});
 			case 'South':
 				return _Utils_update(
 					c,
-					{y: c.y - 1});
+					{y: c.y - $author$project$Main$position_delta});
 			case 'East':
 				return _Utils_update(
 					c,
-					{x: c.x + 1});
+					{x: c.x + $author$project$Main$position_delta});
 			default:
 				return _Utils_update(
 					c,
-					{x: c.x - 1});
+					{x: c.x - $author$project$Main$position_delta});
 		}
 	});
 var $author$project$Main$step = F2(
 	function (model, direction) {
 		var _v0 = model.circles;
 		if (!_v0.b) {
-			return {
-				circles: _List_fromArray(
-					[$author$project$Main$new_circle])
-			};
+			return _Utils_update(
+				model,
+				{
+					circles: _List_fromArray(
+						[$author$project$Main$new_circle])
+				});
 		} else {
 			var circles = _v0;
 			var hd = circles.a;
-			return {
-				circles: A2(
-					$elm$core$List$cons,
-					A2($author$project$Main$update_circle, hd, direction),
-					circles)
-			};
+			return _Utils_update(
+				model,
+				{
+					circles: A2(
+						$elm$core$List$cons,
+						A2($author$project$Main$update_circle, hd, direction),
+						circles)
+				});
 		}
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'Step') {
-			var direction = msg.a;
-			return _Utils_Tuple2(
-				A2($author$project$Main$step, model, direction),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			return _Utils_Tuple2(
-				model,
-				A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_direction));
+		switch (msg.$) {
+			case 'Step':
+				var direction = msg.a;
+				return _Utils_Tuple2(
+					A2($author$project$Main$step, model, direction),
+					$elm$core$Platform$Cmd$none);
+			case 'Choose_direction':
+				return _Utils_Tuple2(
+					model,
+					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_direction));
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{display_text: model.display_text + ' HI! '}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$Choose_direction = {$: 'Choose_direction'};
+var $author$project$Main$Print_foo = {$: 'Print_foo'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
@@ -5554,19 +5567,27 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Choose_direction)
+						$elm$html$Html$Events$onClick($author$project$Main$Choose_direction),
+						$elm$html$Html$Events$onClick($author$project$Main$Print_foo)
 					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text('+')
 					])),
 				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(model.display_text)
+					])),
+				A2(
 				$elm$svg$Svg$svg,
 				_List_fromArray(
 					[
-						$elm$svg$Svg$Attributes$width('300'),
-						$elm$svg$Svg$Attributes$height('300'),
-						$elm$svg$Svg$Attributes$viewBox('0 0 300 300')
+						$elm$svg$Svg$Attributes$width('500'),
+						$elm$svg$Svg$Attributes$height('500'),
+						$elm$svg$Svg$Attributes$viewBox('0 0 500 500')
 					]),
 				$author$project$Main$pixels(model))
 			]));
