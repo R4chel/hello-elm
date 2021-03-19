@@ -131,7 +131,7 @@ update msg model =
             )
 
         Choose_direction ->
-            ( model, Random.generate Step random_direction )
+            ( model, Cmd.batch (List.repeat 20 (Random.generate Step random_direction)) )
 
         Print_foo ->
             ( { model | display_text = model.display_text ++ " HI! " }, Cmd.none )
@@ -149,7 +149,7 @@ view_circle c =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Choose_direction, onClick Print_foo ] [ text "+" ]
+        [ button [ onClick Choose_direction ] [ text "+" ]
         , div [] [ text model.display_text ]
         , svg [ width "500", height "500", viewBox "0 0 500 500" ] (pixels model)
         ]

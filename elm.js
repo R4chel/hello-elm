@@ -5441,6 +5441,27 @@ var $author$project$Main$random_direction = A2(
 	$author$project$Main$North,
 	_List_fromArray(
 		[$author$project$Main$South, $author$project$Main$East, $author$project$Main$West]));
+var $elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2($elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var $elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
 var $author$project$Main$new_circle = {x: 10, y: 10};
 var $author$project$Main$position_delta = 50;
 var $author$project$Main$update_circle = F2(
@@ -5498,7 +5519,11 @@ var $author$project$Main$update = F2(
 			case 'Choose_direction':
 				return _Utils_Tuple2(
 					model,
-					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_direction));
+					$elm$core$Platform$Cmd$batch(
+						A2(
+							$elm$core$List$repeat,
+							20,
+							A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_direction))));
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -5508,7 +5533,6 @@ var $author$project$Main$update = F2(
 		}
 	});
 var $author$project$Main$Choose_direction = {$: 'Choose_direction'};
-var $author$project$Main$Print_foo = {$: 'Print_foo'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
@@ -5567,8 +5591,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Choose_direction),
-						$elm$html$Html$Events$onClick($author$project$Main$Print_foo)
+						$elm$html$Html$Events$onClick($author$project$Main$Choose_direction)
 					]),
 				_List_fromArray(
 					[
