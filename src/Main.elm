@@ -9,6 +9,7 @@ module Main exposing (..)
 import Browser
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
+import Random
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (color, cx, cy, fill, height, r, stroke, strokeWidth, viewBox, width)
 
@@ -18,7 +19,32 @@ import Svg.Attributes exposing (color, cx, cy, fill, height, r, stroke, strokeWi
 
 
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
+
+
+
+-- Direction
+
+
+type Direction
+    = North
+    | South
+    | East
+    | West
+
+
+random_direction : Random.Generator Direction
+random_direction =
+    Random.uniform North [ South, East, West ]
 
 
 
@@ -31,17 +57,38 @@ type alias Circle =
     }
 
 
+new_circle : Circle
+new_circle =
+    { x = 10, y = 10 }
+
+
+update_circle : Circle -> Direction -> Circle
+update_circle c direction =
+    case direction of
+        North ->
+            { c | y = c.y + 1 }
+
+        South ->
+            { c | y = c.y - 1 }
+
+        East ->
+            { c | x = c.x + 1 }
+
+        West ->
+            { c | x = c.x - 1 }
+
+
 
 -- MODEL
 
 
 type alias Model =
-    Circle
+    { circles : List Circle }
 
 
-init : Model
-init =
-    { x = 10, y = 10 }
+init : () -> ( Model, Cmd Msg )
+init () =
+    ( { circles = [] }, Cmd.none )
 
 
 
@@ -49,24 +96,49 @@ init =
 
 
 type Msg
-    = Step
+    = Choose_direction
+    | Step Direction
 
 
-update : Msg -> Model -> Model
+step : Model -> Direction -> Model
+step model direction =
+    case model.circles of
+        [] ->
+            { circles = [ new_circle ] }
+
+        (hd :: _) as circles ->
+            { circles = update_circle hd direction :: circles }
+
+
+
+-- (Random.generate random_direction)
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Step ->
-            { model | x = model.x + 10, y = model.y + 10 }
+        Step direction ->
+            ( step model direction
+            , Cmd.none
+            )
+
+        Choose_direction ->
+            ( model, Random.generate Step random_direction )
 
 
 
 -- VIEW
 
 
+view_circle : Circle -> Svg.Svg msg
+view_circle c =
+    circle [ cx (String.fromInt c.x), cy (String.fromInt c.y), r "5", fill "rgb(255,0,0)" ] []
+
+
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Step ] [ text "+" ]
+        [ button [ onClick Choose_direction ] [ text "+" ]
 
         -- , div [] [ text (String.fromInt model) ]
         , svg [ width "300", height "300", viewBox "0 0 300 300" ] (pixels model)
@@ -74,4 +146,8 @@ view model =
 
 
 pixels model =
-    [ circle [ cx (String.fromInt model.x), cy (String.fromInt model.y), r "5", fill "rgb(255,0,0)" ] [] ]
+    List.map view_circle model.circles
+
+
+
+-- [ circle [ cx (String.fromInt model.x), cy (String.fromInt model.y), r "5", fill "rgb(255,0,0)" ] [] ]
