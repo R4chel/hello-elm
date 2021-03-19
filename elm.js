@@ -4355,7 +4355,7 @@ function _Browser_load(url)
 		}
 	}));
 }
-var $author$project$Main$init = 0;
+var $author$project$Main$init = {x: 10, y: 10};
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
@@ -5168,14 +5168,11 @@ var $elm$browser$Browser$sandbox = function (impl) {
 };
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'Increment') {
-			return model + 1;
-		} else {
-			return model - 1;
-		}
+		return _Utils_update(
+			model,
+			{x: model.x + 10, y: model.y + 10});
 	});
-var $author$project$Main$Decrement = {$: 'Decrement'};
-var $author$project$Main$Increment = {$: 'Increment'};
+var $author$project$Main$Step = {$: 'Step'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
@@ -5209,8 +5206,10 @@ var $author$project$Main$pixels = function (model) {
 			$elm$svg$Svg$circle,
 			_List_fromArray(
 				[
-					$elm$svg$Svg$Attributes$cx('20'),
-					$elm$svg$Svg$Attributes$cy('20'),
+					$elm$svg$Svg$Attributes$cx(
+					$elm$core$String$fromInt(model.x)),
+					$elm$svg$Svg$Attributes$cy(
+					$elm$core$String$fromInt(model.y)),
 					$elm$svg$Svg$Attributes$r('5'),
 					$elm$svg$Svg$Attributes$fill('rgb(255,0,0)')
 				]),
@@ -5232,25 +5231,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Decrement)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('-')
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(model))
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$Increment)
+						$elm$html$Html$Events$onClick($author$project$Main$Step)
 					]),
 				_List_fromArray(
 					[

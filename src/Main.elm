@@ -22,16 +22,26 @@ main =
 
 
 
+-- Circle
+
+
+type alias Circle =
+    { x : Int
+    , y : Int
+    }
+
+
+
 -- MODEL
 
 
 type alias Model =
-    Int
+    Circle
 
 
 init : Model
 init =
-    0
+    { x = 10, y = 10 }
 
 
 
@@ -39,18 +49,14 @@ init =
 
 
 type Msg
-    = Increment
-    | Decrement
+    = Step
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
-            model + 1
-
-        Decrement ->
-            model - 1
+        Step ->
+            { model | x = model.x + 10, y = model.y + 10 }
 
 
 
@@ -60,12 +66,12 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (String.fromInt model) ]
-        , button [ onClick Increment ] [ text "+" ]
+        [ button [ onClick Step ] [ text "+" ]
+
+        -- , div [] [ text (String.fromInt model) ]
         , svg [ width "300", height "300", viewBox "0 0 300 300" ] (pixels model)
         ]
 
 
 pixels model =
-    [ circle [ cx "20", cy "20", r "5", fill "rgb(255,0,0)" ] [] ]
+    [ circle [ cx (String.fromInt model.x), cy (String.fromInt model.y), r "5", fill "rgb(255,0,0)" ] [] ]
