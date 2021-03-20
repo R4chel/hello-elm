@@ -5349,15 +5349,44 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
+var $author$project$Main$CircleUpdate = F4(
+	function (direction, r_delta, g_delta, b_delta) {
+		return {b_delta: b_delta, direction: direction, g_delta: g_delta, r_delta: r_delta};
+	});
+var $elm$random$Random$map4 = F5(
+	function (func, _v0, _v1, _v2, _v3) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		var genC = _v2.a;
+		var genD = _v3.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v4 = genA(seed0);
+				var a = _v4.a;
+				var seed1 = _v4.b;
+				var _v5 = genB(seed1);
+				var b = _v5.a;
+				var seed2 = _v5.b;
+				var _v6 = genC(seed2);
+				var c = _v6.a;
+				var seed3 = _v6.b;
+				var _v7 = genD(seed3);
+				var d = _v7.a;
+				var seed4 = _v7.b;
+				return _Utils_Tuple2(
+					A4(func, a, b, c, d),
+					seed4);
+			});
+	});
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
 var $author$project$Main$East = {$: 'East'};
 var $author$project$Main$North = {$: 'North'};
 var $author$project$Main$South = {$: 'South'};
 var $author$project$Main$West = {$: 'West'};
 var $elm$random$Random$addOne = function (value) {
 	return _Utils_Tuple2(1, value);
-};
-var $elm$core$Basics$negate = function (n) {
-	return -n;
 };
 var $elm$core$Basics$abs = function (n) {
 	return (n < 0) ? (-n) : n;
@@ -5441,6 +5470,25 @@ var $author$project$Main$random_direction = A2(
 	$author$project$Main$North,
 	_List_fromArray(
 		[$author$project$Main$South, $author$project$Main$East, $author$project$Main$West]));
+var $author$project$Main$random_circle_update = A5(
+	$elm$random$Random$map4,
+	$author$project$Main$CircleUpdate,
+	$author$project$Main$random_direction,
+	A2(
+		$elm$random$Random$uniform,
+		-5,
+		_List_fromArray(
+			[5])),
+	A2(
+		$elm$random$Random$uniform,
+		-5,
+		_List_fromArray(
+			[5])),
+	A2(
+		$elm$random$Random$uniform,
+		-5,
+		_List_fromArray(
+			[5])));
 var $elm$core$List$repeatHelp = F3(
 	function (result, n, value) {
 		repeatHelp:
@@ -5462,12 +5510,17 @@ var $elm$core$List$repeat = F2(
 	function (n, value) {
 		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
 	});
-var $author$project$Main$new_circle = {x: 10, y: 10};
+var $avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
+var $avh4$elm_color$Color$red = A4($avh4$elm_color$Color$RgbaSpace, 204 / 255, 0 / 255, 0 / 255, 1.0);
+var $author$project$Main$new_circle = {color: $avh4$elm_color$Color$red, x: 10, y: 10};
 var $author$project$Main$image_height = 500;
 var $author$project$Main$image_width = 500;
 var $elm$core$Basics$modBy = _Basics_modBy;
 var $author$project$Main$position_delta = 50;
-var $author$project$Main$update_circle = F2(
+var $author$project$Main$update_circle_direction = F2(
 	function (c, direction) {
 		switch (direction.$) {
 			case 'North':
@@ -5496,8 +5549,12 @@ var $author$project$Main$update_circle = F2(
 					});
 		}
 	});
+var $author$project$Main$update_circle = F2(
+	function (c, circle_update) {
+		return A2($author$project$Main$update_circle_direction, c, circle_update.direction);
+	});
 var $author$project$Main$step = F2(
-	function (model, direction) {
+	function (model, circle_update) {
 		var _v0 = model.circles;
 		if (!_v0.b) {
 			return _Utils_update(
@@ -5514,7 +5571,7 @@ var $author$project$Main$step = F2(
 				{
 					circles: A2(
 						$elm$core$List$cons,
-						A2($author$project$Main$update_circle, hd, direction),
+						A2($author$project$Main$update_circle, hd, circle_update),
 						circles)
 				});
 		}
@@ -5523,9 +5580,9 @@ var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'Step':
-				var direction = msg.a;
+				var circle_update = msg.a;
 				return _Utils_Tuple2(
-					A2($author$project$Main$step, model, direction),
+					A2($author$project$Main$step, model, circle_update),
 					$elm$core$Platform$Cmd$none);
 			case 'Choose_direction':
 				return _Utils_Tuple2(
@@ -5534,7 +5591,7 @@ var $author$project$Main$update = F2(
 						A2(
 							$elm$core$List$repeat,
 							20,
-							A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_direction))));
+							A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_circle_update))));
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -5626,7 +5683,7 @@ var $author$project$Main$view = function (model) {
 						$elm$svg$Svg$Attributes$viewBox(
 						A2(
 							$elm$core$String$join,
-							'',
+							' ',
 							_List_fromArray(
 								[
 									'0',
