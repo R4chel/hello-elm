@@ -6,7 +6,7 @@ module Main exposing (..)
 --   https://guide.elm-lang.org/architecture/buttons.html
 --
 
-import Basics exposing (modBy)
+import Basics exposing (Int,Float, modBy)
 import Browser
 import Color exposing (Color)
 import Html exposing (Html, button, div, text)
@@ -44,48 +44,79 @@ type Direction
     | West
 
 
+type alias ColorUpdate =
+    { r_delta : Int, g_delta : Int, b_delta : Int }
+
+
 type alias CircleUpdate =
-    { direction : Direction, r_delta : Int, g_delta : Int, b_delta : Int }
+    { direction : Direction, color_update : ColorUpdate }
 
 
 random_direction : Random.Generator Direction
 random_direction =
     Random.uniform North [ South, East, West ]
 
+random_color_update : Random.Generator ColorUpdate
+random_color_update =
+    Random.map3
+       ColorUpdate 
+        (Random.uniform
+            -5
+            [ 5 ]
+        )
+        (Random.uniform
+            -5
+            [ 5 ]
+        )
+        (Random.uniform
+            -5
+            [ 5 ]
+        )
+
 
 random_circle_update : Random.Generator CircleUpdate
 random_circle_update =
-    Random.map4
+    Random.map2
         CircleUpdate
         random_direction
-        (Random.uniform
-            -5
-            [ 5 ]
-        )
-        (Random.uniform
-            -5
-            [ 5 ]
-        )
-        (Random.uniform
-            -5
-            [ 5 ]
-        )
+        random_color_update
 
 
 
 -- Circle
 
 
-type alias Circle =
+
+type alias Position =
     { x : Int
     , y : Int
-    , color : Color
+    }
+
+type alias InternalColor =
+    { red : Int,
+    green : Int,
+    blue : Int
+
+    }
+
+internal_color_to_color : InternalColor -> Color
+internal_color_to_color color =
+                        Color.rgb255 color.red color.green color.blue
+
+internal_color_to_css_color : InternalColor -> String
+internal_color_to_css_color color =
+                            internal_color_to_color color
+                            |> Color.toCssString
+type alias Circle =
+    { 
+    position : Position
+    , color : InternalColor
     }
 
 
 new_circle : Circle
 new_circle =
-    { x = 10, y = 10, color = Color.red }
+    { position = {x = 10, y = 10}, color = { red = 255, green = 0, blue = 0}}
 
 
 image_width =
@@ -101,8 +132,8 @@ position_delta =
     50
 
 
-update_circle_direction : Circle -> Direction -> Circle
-update_circle_direction c direction =
+update_position : Position -> Direction -> Position
+update_position c direction =
     case direction of
         North ->
             { c | y = modBy image_height (c.y + position_delta) }
@@ -118,13 +149,21 @@ update_circle_direction c direction =
 
 
 
--- update_color : Color -> CircleUpdate -> Color
--- update_color color =
+
+update_color : InternalColor -> ColorUpdate -> InternalColor
+update_color color color_update =
+    { color | red = modBy 255 ( color.red + color_update.r_delta ),
+    green = modBy 255 ( color.green + color_update.g_delta ),
+    blue = modBy 255 ( color.blue + color_update.b_delta )
+    }
 
 
 update_circle : Circle -> CircleUpdate -> Circle
 update_circle c circle_update =
-    update_circle_direction c circle_update.direction
+              { position = update_position c.position circle_update.direction,
+                color = update_color c.color circle_update.color_update
+              
+              }
 
 
 
@@ -174,9 +213,11 @@ update msg model =
             , Cmd.none
             )
 
-        Choose_direction ->
-            ( model, Cmd.batch (List.repeat 20 (Random.generate Step random_circle_update)) )
+        -- Choose_direction ->
+        --     ( model, Cmd.batch (List.repeat 20 (Random.generate Step random_circle_update)) )
 
+        Choose_direction ->
+            ( model, (Random.generate Step random_circle_update) )
         Print_foo ->
             ( { model | display_text = model.display_text ++ " HI! " }, Cmd.none )
 
@@ -187,7 +228,7 @@ update msg model =
 
 view_circle : Circle -> Svg.Svg msg
 view_circle c =
-    circle [ cx (String.fromInt c.x), cy (String.fromInt c.y), r "5", fill "rgb(255,0,0)" ] []
+    circle [ cx (String.fromInt c.position.x), cy (String.fromInt c.position.y), r "5", fill (internal_color_to_css_color c.color) ] []
 
 
 view : Model -> Html Msg
@@ -200,7 +241,7 @@ view model =
 
 
 pixels model =
-    List.map view_circle model.circles
+    List.map view_circle (List.reverse model.circles)
 
 
 

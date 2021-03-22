@@ -5349,42 +5349,55 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
-var $author$project$Main$CircleUpdate = F4(
-	function (direction, r_delta, g_delta, b_delta) {
-		return {b_delta: b_delta, direction: direction, g_delta: g_delta, r_delta: r_delta};
+var $author$project$Main$CircleUpdate = F2(
+	function (direction, color_update) {
+		return {color_update: color_update, direction: direction};
 	});
-var $elm$random$Random$map4 = F5(
-	function (func, _v0, _v1, _v2, _v3) {
+var $elm$random$Random$map2 = F3(
+	function (func, _v0, _v1) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v2 = genA(seed0);
+				var a = _v2.a;
+				var seed1 = _v2.b;
+				var _v3 = genB(seed1);
+				var b = _v3.a;
+				var seed2 = _v3.b;
+				return _Utils_Tuple2(
+					A2(func, a, b),
+					seed2);
+			});
+	});
+var $author$project$Main$ColorUpdate = F3(
+	function (r_delta, g_delta, b_delta) {
+		return {b_delta: b_delta, g_delta: g_delta, r_delta: r_delta};
+	});
+var $elm$random$Random$map3 = F4(
+	function (func, _v0, _v1, _v2) {
 		var genA = _v0.a;
 		var genB = _v1.a;
 		var genC = _v2.a;
-		var genD = _v3.a;
 		return $elm$random$Random$Generator(
 			function (seed0) {
-				var _v4 = genA(seed0);
-				var a = _v4.a;
-				var seed1 = _v4.b;
-				var _v5 = genB(seed1);
-				var b = _v5.a;
-				var seed2 = _v5.b;
-				var _v6 = genC(seed2);
-				var c = _v6.a;
-				var seed3 = _v6.b;
-				var _v7 = genD(seed3);
-				var d = _v7.a;
-				var seed4 = _v7.b;
+				var _v3 = genA(seed0);
+				var a = _v3.a;
+				var seed1 = _v3.b;
+				var _v4 = genB(seed1);
+				var b = _v4.a;
+				var seed2 = _v4.b;
+				var _v5 = genC(seed2);
+				var c = _v5.a;
+				var seed3 = _v5.b;
 				return _Utils_Tuple2(
-					A4(func, a, b, c, d),
-					seed4);
+					A3(func, a, b, c),
+					seed3);
 			});
 	});
 var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
-var $author$project$Main$East = {$: 'East'};
-var $author$project$Main$North = {$: 'North'};
-var $author$project$Main$South = {$: 'South'};
-var $author$project$Main$West = {$: 'West'};
 var $elm$random$Random$addOne = function (value) {
 	return _Utils_Tuple2(1, value);
 };
@@ -5465,15 +5478,9 @@ var $elm$random$Random$uniform = F2(
 			$elm$random$Random$addOne(value),
 			A2($elm$core$List$map, $elm$random$Random$addOne, valueList));
 	});
-var $author$project$Main$random_direction = A2(
-	$elm$random$Random$uniform,
-	$author$project$Main$North,
-	_List_fromArray(
-		[$author$project$Main$South, $author$project$Main$East, $author$project$Main$West]));
-var $author$project$Main$random_circle_update = A5(
-	$elm$random$Random$map4,
-	$author$project$Main$CircleUpdate,
-	$author$project$Main$random_direction,
+var $author$project$Main$random_color_update = A4(
+	$elm$random$Random$map3,
+	$author$project$Main$ColorUpdate,
 	A2(
 		$elm$random$Random$uniform,
 		-5,
@@ -5489,38 +5496,35 @@ var $author$project$Main$random_circle_update = A5(
 		-5,
 		_List_fromArray(
 			[5])));
-var $elm$core$List$repeatHelp = F3(
-	function (result, n, value) {
-		repeatHelp:
-		while (true) {
-			if (n <= 0) {
-				return result;
-			} else {
-				var $temp$result = A2($elm$core$List$cons, value, result),
-					$temp$n = n - 1,
-					$temp$value = value;
-				result = $temp$result;
-				n = $temp$n;
-				value = $temp$value;
-				continue repeatHelp;
-			}
-		}
+var $author$project$Main$East = {$: 'East'};
+var $author$project$Main$North = {$: 'North'};
+var $author$project$Main$South = {$: 'South'};
+var $author$project$Main$West = {$: 'West'};
+var $author$project$Main$random_direction = A2(
+	$elm$random$Random$uniform,
+	$author$project$Main$North,
+	_List_fromArray(
+		[$author$project$Main$South, $author$project$Main$East, $author$project$Main$West]));
+var $author$project$Main$random_circle_update = A3($elm$random$Random$map2, $author$project$Main$CircleUpdate, $author$project$Main$random_direction, $author$project$Main$random_color_update);
+var $author$project$Main$new_circle = {
+	color: {blue: 0, green: 0, red: 255},
+	position: {x: 10, y: 10}
+};
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $author$project$Main$update_color = F2(
+	function (color, color_update) {
+		return _Utils_update(
+			color,
+			{
+				blue: A2($elm$core$Basics$modBy, 255, color.blue + color_update.b_delta),
+				green: A2($elm$core$Basics$modBy, 255, color.green + color_update.g_delta),
+				red: A2($elm$core$Basics$modBy, 255, color.red + color_update.r_delta)
+			});
 	});
-var $elm$core$List$repeat = F2(
-	function (n, value) {
-		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
-	});
-var $avh4$elm_color$Color$RgbaSpace = F4(
-	function (a, b, c, d) {
-		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
-	});
-var $avh4$elm_color$Color$red = A4($avh4$elm_color$Color$RgbaSpace, 204 / 255, 0 / 255, 0 / 255, 1.0);
-var $author$project$Main$new_circle = {color: $avh4$elm_color$Color$red, x: 10, y: 10};
 var $author$project$Main$image_height = 500;
 var $author$project$Main$image_width = 500;
-var $elm$core$Basics$modBy = _Basics_modBy;
 var $author$project$Main$position_delta = 50;
-var $author$project$Main$update_circle_direction = F2(
+var $author$project$Main$update_position = F2(
 	function (c, direction) {
 		switch (direction.$) {
 			case 'North':
@@ -5551,7 +5555,10 @@ var $author$project$Main$update_circle_direction = F2(
 	});
 var $author$project$Main$update_circle = F2(
 	function (c, circle_update) {
-		return A2($author$project$Main$update_circle_direction, c, circle_update.direction);
+		return {
+			color: A2($author$project$Main$update_color, c.color, circle_update.color_update),
+			position: A2($author$project$Main$update_position, c.position, circle_update.direction)
+		};
 	});
 var $author$project$Main$step = F2(
 	function (model, circle_update) {
@@ -5587,11 +5594,7 @@ var $author$project$Main$update = F2(
 			case 'Choose_direction':
 				return _Utils_Tuple2(
 					model,
-					$elm$core$Platform$Cmd$batch(
-						A2(
-							$elm$core$List$repeat,
-							20,
-							A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_circle_update))));
+					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_circle_update));
 			default:
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -5626,6 +5629,63 @@ var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
 var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
 var $elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
 var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
+var $avh4$elm_color$Color$scaleFrom255 = function (c) {
+	return c / 255;
+};
+var $avh4$elm_color$Color$rgb255 = F3(
+	function (r, g, b) {
+		return A4(
+			$avh4$elm_color$Color$RgbaSpace,
+			$avh4$elm_color$Color$scaleFrom255(r),
+			$avh4$elm_color$Color$scaleFrom255(g),
+			$avh4$elm_color$Color$scaleFrom255(b),
+			1.0);
+	});
+var $author$project$Main$internal_color_to_color = function (color) {
+	return A3($avh4$elm_color$Color$rgb255, color.red, color.green, color.blue);
+};
+var $elm$core$String$concat = function (strings) {
+	return A2($elm$core$String$join, '', strings);
+};
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$core$Basics$round = _Basics_round;
+var $avh4$elm_color$Color$toCssString = function (_v0) {
+	var r = _v0.a;
+	var g = _v0.b;
+	var b = _v0.c;
+	var a = _v0.d;
+	var roundTo = function (x) {
+		return $elm$core$Basics$round(x * 1000) / 1000;
+	};
+	var pct = function (x) {
+		return $elm$core$Basics$round(x * 10000) / 100;
+	};
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[
+				'rgba(',
+				$elm$core$String$fromFloat(
+				pct(r)),
+				'%,',
+				$elm$core$String$fromFloat(
+				pct(g)),
+				'%,',
+				$elm$core$String$fromFloat(
+				pct(b)),
+				'%,',
+				$elm$core$String$fromFloat(
+				roundTo(a)),
+				')'
+			]));
+};
+var $author$project$Main$internal_color_to_css_color = function (color) {
+	return $avh4$elm_color$Color$toCssString(
+		$author$project$Main$internal_color_to_color(color));
+};
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $author$project$Main$view_circle = function (c) {
 	return A2(
@@ -5633,16 +5693,20 @@ var $author$project$Main$view_circle = function (c) {
 		_List_fromArray(
 			[
 				$elm$svg$Svg$Attributes$cx(
-				$elm$core$String$fromInt(c.x)),
+				$elm$core$String$fromInt(c.position.x)),
 				$elm$svg$Svg$Attributes$cy(
-				$elm$core$String$fromInt(c.y)),
+				$elm$core$String$fromInt(c.position.y)),
 				$elm$svg$Svg$Attributes$r('5'),
-				$elm$svg$Svg$Attributes$fill('rgb(255,0,0)')
+				$elm$svg$Svg$Attributes$fill(
+				$author$project$Main$internal_color_to_css_color(c.color))
 			]),
 		_List_Nil);
 };
 var $author$project$Main$pixels = function (model) {
-	return A2($elm$core$List$map, $author$project$Main$view_circle, model.circles);
+	return A2(
+		$elm$core$List$map,
+		$author$project$Main$view_circle,
+		$elm$core$List$reverse(model.circles));
 };
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
