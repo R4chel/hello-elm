@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 -- Press buttons to increment and decrement a counter.
 --
@@ -6,12 +6,15 @@ module Main exposing (..)
 --   https://guide.elm-lang.org/architecture/buttons.html
 --
 
+import Base64 exposing (decode, encode)
 import Basics exposing (Float, Int, modBy)
 import Browser
 import Browser.Events exposing (onAnimationFrame)
 import Color exposing (Color)
 import Dict exposing (Dict)
+import File.Download as Download
 import Html exposing (Html, button, div, text)
+import Html.Attributes exposing (href)
 import Html.Events exposing (onClick)
 import Random
 import Svg exposing (circle, svg)
@@ -30,10 +33,16 @@ main =
 -- SUBSCRIPTIONS
 
 
+port getSvg : String -> Cmd msg
+
+
+port gotSvg : (String -> msg) -> Sub msg
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     if model.paused then
-        Sub.none
+        gotSvg GotSvg
 
     else
         onAnimationFrame (\_ -> Choose_direction)
@@ -185,6 +194,7 @@ type alias Model =
     , display_text : String
     , visible_circles : Dict ComparablePosition InternalColor
     , paused : Bool
+    , output : String
     }
 
 
@@ -198,6 +208,7 @@ init () =
       , display_text = ""
       , visible_circles = Dict.singleton ( initial_circle.position.x, initial_circle.position.y ) initial_circle.color
       , paused = False
+      , output = ""
       }
     , Cmd.none
     )
@@ -212,6 +223,8 @@ type Msg
     | Step CircleUpdate
     | Toggle_paused
     | Print_foo
+    | GetSvg
+    | GotSvg String
 
 
 step : Model -> CircleUpdate -> Model
@@ -223,8 +236,13 @@ step model circle_update =
     { model | active_circle = updated_circle, visible_circles = Dict.insert ( updated_circle.position.x, updated_circle.position.y ) updated_circle.color model.visible_circles }
 
 
+download_svg : String -> Cmd Msg
+download_svg svgContent =
+    Download.string "elm-art.svg" "image/svg+xml" svgContent
 
--- (Random.generate random_direction)
+
+withNone model =
+    ( model, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -235,8 +253,6 @@ update msg model =
             , Cmd.none
             )
 
-        -- Choose_direction ->
-        --     ( model, Cmd.batch (List.repeat 20 (Random.generate Step random_circle_update)) )
         Choose_direction ->
             ( model, Random.generate Step random_circle_update )
 
@@ -248,14 +264,15 @@ update msg model =
             , Cmd.none
             )
 
+        GetSvg ->
+            ( model, getSvg "output" )
+
+        GotSvg output ->
+            ( { model | output = output }, Cmd.none )
+
 
 
 -- VIEW
-
-
-view_circle : ( ComparablePosition, InternalColor ) -> Svg.Svg msg
-view_circle ( position, color ) =
-    circle [ cx (String.fromInt (Tuple.first position)), cy (String.fromInt (Tuple.second position)), r "5", fill (internal_color_to_css_color color) ] []
 
 
 view : Model -> Html Msg
@@ -270,14 +287,31 @@ view model =
                     "Pause"
                 )
             ]
+        , button [ onClick GetSvg ]
+            [ text "Download"
+            ]
         , div [] [ text model.display_text ]
-        , svg [ width (String.fromInt image_width), height (String.fromInt image_height), viewBox (String.join " " [ "0", "0", String.fromInt image_width, String.fromInt image_height ]) ] (pixels model)
+        , div [] [ model_to_svg model ]
+        , if String.isEmpty model.output then
+            text "Nothing to download"
+
+          else
+            Html.a
+                [ Html.Attributes.download "output.svg"
+                , Html.Attributes.href ("data:image/svg+xml;base64," ++ Base64.encode model.output)
+                ]
+                [ Html.text "Download Svg" ]
         ]
+
+
+view_circle : ( ComparablePosition, InternalColor ) -> Svg.Svg msg
+view_circle ( position, color ) =
+    circle [ cx (String.fromInt (Tuple.first position)), cy (String.fromInt (Tuple.second position)), r "5", fill (internal_color_to_css_color color) ] []
 
 
 pixels model =
     Dict.toList model.visible_circles |> List.map view_circle
 
 
-
--- [ circle [ cx (String.fromInt model.x), cy (String.fromInt model.y), r "5", fill "rgb(255,0,0)" ] [] ]
+model_to_svg model =
+    svg [ width (String.fromInt image_width), height (String.fromInt image_height), viewBox (String.join " " [ "0", "0", String.fromInt image_width, String.fromInt image_height ]) ] (pixels model)
