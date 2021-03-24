@@ -116,7 +116,7 @@ type alias Circle =
 
 new_circle : Circle
 new_circle =
-    { position = {x = 10, y = 10}, color = { red = 255, green = 0, blue = 0}}
+    { position = {x = 10, y = 10}, color = { red = 100, green = 0, blue = 100}}
 
 
 image_width =
@@ -129,7 +129,7 @@ image_height =
 
 position_delta : Int
 position_delta =
-    50
+    10
 
 
 update_position : Position -> Direction -> Position
@@ -152,9 +152,9 @@ update_position c direction =
 
 update_color : InternalColor -> ColorUpdate -> InternalColor
 update_color color color_update =
-    { color | red = modBy 255 ( color.red + color_update.r_delta ),
-    green = modBy 255 ( color.green + color_update.g_delta ),
-    blue = modBy 255 ( color.blue + color_update.b_delta )
+    { red = clamp 0 255 ( color.red + color_update.r_delta ),
+      green = clamp 0  255 ( color.green + color_update.g_delta ),
+      blue = clamp 0 255 ( color.blue + color_update.b_delta )
     }
 
 

@@ -5507,23 +5507,25 @@ var $author$project$Main$random_direction = A2(
 		[$author$project$Main$South, $author$project$Main$East, $author$project$Main$West]));
 var $author$project$Main$random_circle_update = A3($elm$random$Random$map2, $author$project$Main$CircleUpdate, $author$project$Main$random_direction, $author$project$Main$random_color_update);
 var $author$project$Main$new_circle = {
-	color: {blue: 0, green: 0, red: 255},
+	color: {blue: 100, green: 0, red: 100},
 	position: {x: 10, y: 10}
 };
-var $elm$core$Basics$modBy = _Basics_modBy;
+var $elm$core$Basics$clamp = F3(
+	function (low, high, number) {
+		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
+	});
 var $author$project$Main$update_color = F2(
 	function (color, color_update) {
-		return _Utils_update(
-			color,
-			{
-				blue: A2($elm$core$Basics$modBy, 255, color.blue + color_update.b_delta),
-				green: A2($elm$core$Basics$modBy, 255, color.green + color_update.g_delta),
-				red: A2($elm$core$Basics$modBy, 255, color.red + color_update.r_delta)
-			});
+		return {
+			blue: A3($elm$core$Basics$clamp, 0, 255, color.blue + color_update.b_delta),
+			green: A3($elm$core$Basics$clamp, 0, 255, color.green + color_update.g_delta),
+			red: A3($elm$core$Basics$clamp, 0, 255, color.red + color_update.r_delta)
+		};
 	});
 var $author$project$Main$image_height = 500;
 var $author$project$Main$image_width = 500;
-var $author$project$Main$position_delta = 50;
+var $elm$core$Basics$modBy = _Basics_modBy;
+var $author$project$Main$position_delta = 10;
 var $author$project$Main$update_position = F2(
 	function (c, direction) {
 		switch (direction.$) {
