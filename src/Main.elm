@@ -14,6 +14,7 @@ import Html.Events exposing (onClick)
 import Random
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (color, cx, cy, fill, height, r, stroke, strokeWidth, viewBox, width)
+import Dict exposing (Dict)
 
 
 
@@ -92,6 +93,8 @@ type alias Position =
     , y : Int
     }
 
+type alias ComparablePosition = (Int, Int)
+
 type alias InternalColor =
     { red : Int,
     green : Int,
@@ -108,8 +111,7 @@ internal_color_to_css_color color =
                             internal_color_to_color color
                             |> Color.toCssString
 type alias Circle =
-    { 
-    position : Position
+    { position : Position
     , color : InternalColor
     }
 
@@ -136,16 +138,16 @@ update_position : Position -> Direction -> Position
 update_position c direction =
     case direction of
         North ->
-            { c | y = modBy image_height (c.y + position_delta) }
+            { c | y = clamp 0 image_height (c.y + position_delta) }
 
         South ->
-            { c | y = modBy image_height (c.y - position_delta) }
+            { c | y = clamp 0 image_height (c.y - position_delta) }
 
         East ->
-            { c | x = modBy image_width (c.x + position_delta) }
+            { c | x = clamp 0 image_width (c.x + position_delta) }
 
         West ->
-            { c | x = modBy image_width (c.x - position_delta) }
+            { c | x = clamp 0 image_width (c.x - position_delta) }
 
 
 
@@ -162,7 +164,6 @@ update_circle : Circle -> CircleUpdate -> Circle
 update_circle c circle_update =
               { position = update_position c.position circle_update.direction,
                 color = update_color c.color circle_update.color_update
-              
               }
 
 
@@ -171,14 +172,17 @@ update_circle c circle_update =
 
 
 type alias Model =
-    { circles : List Circle
+    { active_circle : Circle
     , display_text : String
+    , visible_circles : Dict ComparablePosition InternalColor
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init () =
-    ( { circles = [], display_text = "" }, Cmd.none )
+    let initial_circle = new_circle in 
+    
+    ( { active_circle = initial_circle, display_text = "", visible_circles = Dict.singleton (initial_circle.position.x, initial_circle.position.y) initial_circle.color }, Cmd.none )
 
 
 
@@ -193,12 +197,8 @@ type Msg
 
 step : Model -> CircleUpdate -> Model
 step model circle_update =
-    case model.circles of
-        [] ->
-            { model | circles = [ new_circle ] }
-
-        (hd :: _) as circles ->
-            { model | circles = update_circle hd circle_update :: circles }
+  let updated_circle = update_circle model.active_circle circle_update in
+  { model | active_circle = updated_circle, visible_circles = Dict.insert ( updated_circle.position.x, updated_circle.position.y ) updated_circle.color model.visible_circles }
 
 
 
@@ -226,9 +226,9 @@ update msg model =
 -- VIEW
 
 
-view_circle : Circle -> Svg.Svg msg
-view_circle c =
-    circle [ cx (String.fromInt c.position.x), cy (String.fromInt c.position.y), r "5", fill (internal_color_to_css_color c.color) ] []
+view_circle : (ComparablePosition, InternalColor) -> Svg.Svg msg
+view_circle ( position, color ) =
+    circle [ cx (String.fromInt (Tuple.first position)), cy (String.fromInt (Tuple.second position)), r "5", fill (internal_color_to_css_color color) ] []
 
 
 view : Model -> Html Msg
@@ -241,7 +241,7 @@ view model =
 
 
 pixels model =
-    List.map view_circle (List.reverse model.circles)
+    Dict.toList model.visible_circles |> List.map view_circle
 
 
 
