@@ -5262,6 +5262,7 @@ var $author$project$Main$Choose_direction = {$: 'Choose_direction'};
 var $author$project$Main$GotSvg = function (a) {
 	return {$: 'GotSvg', a: a};
 };
+var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$gotSvg = _Platform_incomingPort('gotSvg', $elm$json$Json$Decode$string);
 var $elm$browser$Browser$AnimationManager$Time = function (a) {
@@ -5399,10 +5400,15 @@ var $elm$browser$Browser$AnimationManager$onAnimationFrame = function (tagger) {
 };
 var $elm$browser$Browser$Events$onAnimationFrame = $elm$browser$Browser$AnimationManager$onAnimationFrame;
 var $author$project$Main$subscriptions = function (model) {
-	return model.paused ? $author$project$Main$gotSvg($author$project$Main$GotSvg) : $elm$browser$Browser$Events$onAnimationFrame(
-		function (_v0) {
-			return $author$project$Main$Choose_direction;
-		});
+	return model.paused ? $author$project$Main$gotSvg($author$project$Main$GotSvg) : $elm$core$Platform$Sub$batch(
+		_List_fromArray(
+			[
+				$author$project$Main$gotSvg($author$project$Main$GotSvg),
+				$elm$browser$Browser$Events$onAnimationFrame(
+				function (_v0) {
+					return $author$project$Main$Choose_direction;
+				})
+			]));
 };
 var $author$project$Main$Step = function (a) {
 	return {$: 'Step', a: a};
@@ -5865,20 +5871,23 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 'GetSvg':
 				return _Utils_Tuple2(
-					model,
+					_Utils_update(
+						model,
+						{display_text: model.display_text + ' Download? '}),
 					$author$project$Main$getSvg('output'));
 			default:
 				var output = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{output: output}),
+						{display_text: model.display_text + ' TADA!!! ', output: output}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$GetSvg = {$: 'GetSvg'};
 var $author$project$Main$Toggle_paused = {$: 'Toggle_paused'};
 var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -6101,6 +6110,7 @@ var $elm$html$Html$Attributes$href = function (url) {
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
@@ -6235,8 +6245,18 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
+var $elm$html$Html$Attributes$rows = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'rows',
+		$elm$core$String$fromInt(n));
+};
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$textarea = _VirtualDom_node('textarea');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6262,7 +6282,7 @@ var $author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Download')
+						$elm$html$Html$text('GetSvg')
 					])),
 				A2(
 				$elm$html$Html$div,
@@ -6271,14 +6291,27 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$text(model.display_text)
 					])),
+				A2($elm$html$Html$br, _List_Nil, _List_Nil),
 				A2(
 				$elm$html$Html$div,
-				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$id('output')
+					]),
 				_List_fromArray(
 					[
 						$author$project$Main$model_to_svg(model)
 					])),
-				$elm$core$String$isEmpty(model.output) ? $elm$html$Html$text('Nothing to download') : A2(
+				A2(
+				$elm$html$Html$textarea,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$rows(10),
+						A2($elm$html$Html$Attributes$style, 'width', '100%'),
+						$elm$html$Html$Attributes$value(model.output)
+					]),
+				_List_Nil),
+				$elm$core$String$isEmpty(model.output) ? $elm$html$Html$text('') : A2(
 				$elm$html$Html$a,
 				_List_fromArray(
 					[

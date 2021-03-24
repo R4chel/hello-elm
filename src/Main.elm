@@ -45,7 +45,7 @@ subscriptions model =
         gotSvg GotSvg
 
     else
-        onAnimationFrame (\_ -> Choose_direction)
+        Sub.batch [ gotSvg GotSvg, onAnimationFrame (\_ -> Choose_direction) ]
 
 
 
@@ -265,10 +265,10 @@ update msg model =
             )
 
         GetSvg ->
-            ( model, getSvg "output" )
+            ( { model | display_text = model.display_text ++ " Download? " }, getSvg "output" )
 
         GotSvg output ->
-            ( { model | output = output }, Cmd.none )
+            ( { model | output = output, display_text = model.display_text ++ " TADA!!! " }, Cmd.none )
 
 
 
@@ -287,13 +287,22 @@ view model =
                     "Pause"
                 )
             ]
-        , button [ onClick GetSvg ]
-            [ text "Download"
-            ]
+
+        -- , button [ onClick GetSvg ]
+        --     [ text "Download"
+        --     ]
+        , Html.button [ onClick GetSvg ] [ Html.text "GetSvg" ]
         , div [] [ text model.display_text ]
-        , div [] [ model_to_svg model ]
+        , Html.br [] []
+        , div [ Html.Attributes.id "output" ] [ model_to_svg model ]
+        , Html.textarea
+            [ Html.Attributes.rows 10
+            , Html.Attributes.style "width" "100%"
+            , Html.Attributes.value model.output
+            ]
+            []
         , if String.isEmpty model.output then
-            text "Nothing to download"
+            Html.text ""
 
           else
             Html.a
@@ -301,6 +310,15 @@ view model =
                 , Html.Attributes.href ("data:image/svg+xml;base64," ++ Base64.encode model.output)
                 ]
                 [ Html.text "Download Svg" ]
+
+        -- , if String.isEmpty model.output then
+        --     text "Nothing to download"
+        --   else
+        --     Html.a
+        --         [ Html.Attributes.download "output.svg"
+        --         , Html.Attributes.href ("data:image/svg+xml;base64," ++ Base64.encode model.output)
+        --         ]
+        --         [ Html.text "Download Svg" ]
         ]
 
 
