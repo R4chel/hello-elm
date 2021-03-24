@@ -5249,7 +5249,7 @@ var $author$project$Main$init = function (_v0) {
 		{
 			active_circle: initial_circle,
 			display_text: '',
-			paused: true,
+			paused: false,
 			visible_circles: A2(
 				$elm$core$Dict$singleton,
 				_Utils_Tuple2(initial_circle.position.x, initial_circle.position.y),
@@ -5506,6 +5506,7 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
+var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$CircleUpdate = F2(
 	function (direction, color_update) {
 		return {color_update: color_update, direction: direction};
@@ -5844,14 +5845,21 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					model,
 					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_circle_update));
-			default:
+			case 'Print_foo':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{display_text: model.display_text + ' HI! '}),
 					$elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{paused: !model.paused}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Main$Toggle_paused = {$: 'Toggle_paused'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
@@ -5977,11 +5985,12 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Choose_direction)
+						$elm$html$Html$Events$onClick($author$project$Main$Toggle_paused)
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('+')
+						$elm$html$Html$text(
+						model.paused ? 'Play' : 'Pause')
 					])),
 				A2(
 				$elm$html$Html$div,

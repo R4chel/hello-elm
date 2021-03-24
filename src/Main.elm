@@ -210,6 +210,7 @@ init () =
 type Msg
     = Choose_direction
     | Step CircleUpdate
+    | Toggle_paused
     | Print_foo
 
 
@@ -242,6 +243,11 @@ update msg model =
         Print_foo ->
             ( { model | display_text = model.display_text ++ " HI! " }, Cmd.none )
 
+        Toggle_paused ->
+            ( { model | paused = not model.paused }
+            , Cmd.none
+            )
+
 
 
 -- VIEW
@@ -255,7 +261,15 @@ view_circle ( position, color ) =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Choose_direction ] [ text "+" ]
+        [ button [ onClick Toggle_paused ]
+            [ text
+                (if model.paused then
+                    "Play"
+
+                 else
+                    "Pause"
+                )
+            ]
         , div [] [ text model.display_text ]
         , svg [ width (String.fromInt image_width), height (String.fromInt image_height), viewBox (String.join " " [ "0", "0", String.fromInt image_width, String.fromInt image_height ]) ] (pixels model)
         ]
