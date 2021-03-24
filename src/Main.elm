@@ -6,15 +6,16 @@ module Main exposing (..)
 --   https://guide.elm-lang.org/architecture/buttons.html
 --
 
-import Basics exposing (Int,Float, modBy)
+import Basics exposing (Float, Int, modBy)
 import Browser
+import Browser.Events exposing (onAnimationFrame)
 import Color exposing (Color)
+import Dict exposing (Dict)
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 import Random
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (color, cx, cy, fill, height, r, stroke, strokeWidth, viewBox, width)
-import Dict exposing (Dict)
 
 
 
@@ -57,10 +58,11 @@ random_direction : Random.Generator Direction
 random_direction =
     Random.uniform North [ South, East, West ]
 
+
 random_color_update : Random.Generator ColorUpdate
 random_color_update =
     Random.map3
-       ColorUpdate 
+        ColorUpdate
         (Random.uniform
             -5
             [ 5 ]
@@ -87,29 +89,34 @@ random_circle_update =
 -- Circle
 
 
-
 type alias Position =
     { x : Int
     , y : Int
     }
 
-type alias ComparablePosition = (Int, Int)
+
+type alias ComparablePosition =
+    ( Int, Int )
+
 
 type alias InternalColor =
-    { red : Int,
-    green : Int,
-    blue : Int
-
+    { red : Int
+    , green : Int
+    , blue : Int
     }
+
 
 internal_color_to_color : InternalColor -> Color
 internal_color_to_color color =
-                        Color.rgb255 color.red color.green color.blue
+    Color.rgb255 color.red color.green color.blue
+
 
 internal_color_to_css_color : InternalColor -> String
 internal_color_to_css_color color =
-                            internal_color_to_color color
-                            |> Color.toCssString
+    internal_color_to_color color
+        |> Color.toCssString
+
+
 type alias Circle =
     { position : Position
     , color : InternalColor
@@ -118,7 +125,7 @@ type alias Circle =
 
 new_circle : Circle
 new_circle =
-    { position = {x = 10, y = 10}, color = { red = 100, green = 0, blue = 100}}
+    { position = { x = 10, y = 10 }, color = { red = 100, green = 0, blue = 100 } }
 
 
 image_width =
@@ -150,21 +157,19 @@ update_position c direction =
             { c | x = clamp 0 image_width (c.x - position_delta) }
 
 
-
-
 update_color : InternalColor -> ColorUpdate -> InternalColor
 update_color color color_update =
-    { red = clamp 0 255 ( color.red + color_update.r_delta ),
-      green = clamp 0  255 ( color.green + color_update.g_delta ),
-      blue = clamp 0 255 ( color.blue + color_update.b_delta )
+    { red = clamp 0 255 (color.red + color_update.r_delta)
+    , green = clamp 0 255 (color.green + color_update.g_delta)
+    , blue = clamp 0 255 (color.blue + color_update.b_delta)
     }
 
 
 update_circle : Circle -> CircleUpdate -> Circle
 update_circle c circle_update =
-              { position = update_position c.position circle_update.direction,
-                color = update_color c.color circle_update.color_update
-              }
+    { position = update_position c.position circle_update.direction
+    , color = update_color c.color circle_update.color_update
+    }
 
 
 
@@ -180,9 +185,16 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init () =
-    let initial_circle = new_circle in 
-    
-    ( { active_circle = initial_circle, display_text = "", visible_circles = Dict.singleton (initial_circle.position.x, initial_circle.position.y) initial_circle.color }, Cmd.none )
+    let
+        initial_circle =
+            new_circle
+    in
+    ( { active_circle = initial_circle
+      , display_text = ""
+      , visible_circles = Dict.singleton ( initial_circle.position.x, initial_circle.position.y ) initial_circle.color
+      }
+    , Cmd.none
+    )
 
 
 
@@ -197,8 +209,11 @@ type Msg
 
 step : Model -> CircleUpdate -> Model
 step model circle_update =
-  let updated_circle = update_circle model.active_circle circle_update in
-  { model | active_circle = updated_circle, visible_circles = Dict.insert ( updated_circle.position.x, updated_circle.position.y ) updated_circle.color model.visible_circles }
+    let
+        updated_circle =
+            update_circle model.active_circle circle_update
+    in
+    { model | active_circle = updated_circle, visible_circles = Dict.insert ( updated_circle.position.x, updated_circle.position.y ) updated_circle.color model.visible_circles }
 
 
 
@@ -215,9 +230,9 @@ update msg model =
 
         -- Choose_direction ->
         --     ( model, Cmd.batch (List.repeat 20 (Random.generate Step random_circle_update)) )
-
         Choose_direction ->
-            ( model, (Random.generate Step random_circle_update) )
+            ( model, Random.generate Step random_circle_update )
+
         Print_foo ->
             ( { model | display_text = model.display_text ++ " HI! " }, Cmd.none )
 
@@ -226,7 +241,7 @@ update msg model =
 -- VIEW
 
 
-view_circle : (ComparablePosition, InternalColor) -> Svg.Svg msg
+view_circle : ( ComparablePosition, InternalColor ) -> Svg.Svg msg
 view_circle ( position, color ) =
     circle [ cx (String.fromInt (Tuple.first position)), cy (String.fromInt (Tuple.second position)), r "5", fill (internal_color_to_css_color color) ] []
 
