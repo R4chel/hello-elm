@@ -31,8 +31,12 @@ main =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    if model.paused then
+        Sub.none
+
+    else
+        onAnimationFrame (\_ -> Choose_direction)
 
 
 
@@ -180,6 +184,7 @@ type alias Model =
     { active_circle : Circle
     , display_text : String
     , visible_circles : Dict ComparablePosition InternalColor
+    , paused : Bool
     }
 
 
@@ -192,6 +197,7 @@ init () =
     ( { active_circle = initial_circle
       , display_text = ""
       , visible_circles = Dict.singleton ( initial_circle.position.x, initial_circle.position.y ) initial_circle.color
+      , paused = False
       }
     , Cmd.none
     )
