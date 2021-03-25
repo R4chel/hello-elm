@@ -291,7 +291,7 @@ view model =
         -- , button [ onClick GetSvg ]
         --     [ text "Download"
         --     ]
-        , Html.button [ onClick GetSvg ] [ Html.text "GetSvg" ]
+        , Html.button [ onClick GetSvg ] [ Html.text "Download" ]
         , div [] [ text model.display_text ]
         , Html.br [] []
         , div [ Html.Attributes.id "output" ] [ model_to_svg model ]
