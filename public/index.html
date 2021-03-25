@@ -12,8 +12,9 @@
          var app = Elm.Main.init({
              node: document.getElementById('myapp')
          });
-         app.ports.getSvg.subscribe(function(id){
-             var node = document.getElementById(id);
+         console.log(app);
+         app.ports.getSvg.subscribe(function(){
+             var node = document.getElementById("output");
              app.ports.gotSvg.send(node.innerHTML);
          });
         </script>

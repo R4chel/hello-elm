@@ -33,30 +33,30 @@ main =
 -- SUBSCRIPTIONS
 
 
-port getSvg : String -> Cmd msg
+{-| TODO no need to take a string
+-}
+port getSvg : () -> Cmd msg
 
 
+{-| TODO change to be (() -> msg)
+-}
 port gotSvg : (String -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if model.paused then
-        gotSvg GotSvg
+    Sub.batch
+        [ gotSvg GotSvg
+        , if model.paused then
+            Sub.none
 
-    else
-        Sub.batch [ gotSvg GotSvg, onAnimationFrame (\_ -> Choose_direction) ]
+          else
+            onAnimationFrame (\_ -> Choose_direction)
+        ]
 
 
 
 -- Direction
-
-
-type Direction
-    = North
-    | South
-    | East
-    | West
 
 
 type alias ColorUpdate =
