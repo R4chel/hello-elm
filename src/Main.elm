@@ -12,6 +12,7 @@ import Browser
 import Browser.Events exposing (onAnimationFrame)
 import Color exposing (Color)
 import Dict exposing (Dict)
+import Direction exposing (Direction(..))
 import File.Download as Download
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (href)
@@ -22,6 +23,8 @@ import Svg.Attributes exposing (color, cx, cy, fill, height, r, stroke, strokeWi
 
 
 
+-- TODO: change snake case to camel case
+-- MAIN
 -- MAIN
 
 
@@ -67,11 +70,6 @@ type alias CircleUpdate =
     { direction : Direction, color_update : ColorUpdate }
 
 
-random_direction : Random.Generator Direction
-random_direction =
-    Random.uniform North [ South, East, West ]
-
-
 random_color_update : Random.Generator ColorUpdate
 random_color_update =
     Random.map3
@@ -94,12 +92,8 @@ random_circle_update : Random.Generator CircleUpdate
 random_circle_update =
     Random.map2
         CircleUpdate
-        random_direction
+        Direction.generator
         random_color_update
-
-
-
--- Circle
 
 
 type alias Position =
@@ -265,7 +259,7 @@ update msg model =
             )
 
         GetSvg ->
-            ( { model | display_text = model.display_text ++ " Download? " }, getSvg "output" )
+            ( { model | display_text = model.display_text ++ " Download? " }, getSvg () )
 
         GotSvg output ->
             ( { model | output = output, display_text = model.display_text ++ " TADA!!! " }, Cmd.none )

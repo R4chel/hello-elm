@@ -5265,6 +5265,7 @@ var $author$project$Main$GotSvg = function (a) {
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Main$gotSvg = _Platform_incomingPort('gotSvg', $elm$json$Json$Decode$string);
+var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$AnimationManager$Time = function (a) {
 	return {$: 'Time', a: a};
 };
@@ -5400,11 +5401,11 @@ var $elm$browser$Browser$AnimationManager$onAnimationFrame = function (tagger) {
 };
 var $elm$browser$Browser$Events$onAnimationFrame = $elm$browser$Browser$AnimationManager$onAnimationFrame;
 var $author$project$Main$subscriptions = function (model) {
-	return model.paused ? $author$project$Main$gotSvg($author$project$Main$GotSvg) : $elm$core$Platform$Sub$batch(
+	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
 				$author$project$Main$gotSvg($author$project$Main$GotSvg),
-				$elm$browser$Browser$Events$onAnimationFrame(
+				model.paused ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrame(
 				function (_v0) {
 					return $author$project$Main$Choose_direction;
 				})
@@ -5516,60 +5517,26 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Main$getSvg = _Platform_outgoingPort('getSvg', $elm$json$Json$Encode$string);
+var $elm$json$Json$Encode$null = _Json_encodeNull;
+var $author$project$Main$getSvg = _Platform_outgoingPort(
+	'getSvg',
+	function ($) {
+		return $elm$json$Json$Encode$null;
+	});
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Main$CircleUpdate = F2(
 	function (direction, color_update) {
 		return {color_update: color_update, direction: direction};
 	});
-var $elm$random$Random$map2 = F3(
-	function (func, _v0, _v1) {
-		var genA = _v0.a;
-		var genB = _v1.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v2 = genA(seed0);
-				var a = _v2.a;
-				var seed1 = _v2.b;
-				var _v3 = genB(seed1);
-				var b = _v3.a;
-				var seed2 = _v3.b;
-				return _Utils_Tuple2(
-					A2(func, a, b),
-					seed2);
-			});
-	});
-var $author$project$Main$ColorUpdate = F3(
-	function (r_delta, g_delta, b_delta) {
-		return {b_delta: b_delta, g_delta: g_delta, r_delta: r_delta};
-	});
-var $elm$random$Random$map3 = F4(
-	function (func, _v0, _v1, _v2) {
-		var genA = _v0.a;
-		var genB = _v1.a;
-		var genC = _v2.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v3 = genA(seed0);
-				var a = _v3.a;
-				var seed1 = _v3.b;
-				var _v4 = genB(seed1);
-				var b = _v4.a;
-				var seed2 = _v4.b;
-				var _v5 = genC(seed2);
-				var c = _v5.a;
-				var seed3 = _v5.b;
-				return _Utils_Tuple2(
-					A3(func, a, b, c),
-					seed3);
-			});
-	});
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
+var $author$project$Direction$East = {$: 'East'};
+var $author$project$Direction$North = {$: 'North'};
+var $author$project$Direction$South = {$: 'South'};
+var $author$project$Direction$West = {$: 'West'};
 var $elm$random$Random$addOne = function (value) {
 	return _Utils_Tuple2(1, value);
+};
+var $elm$core$Basics$negate = function (n) {
+	return -n;
 };
 var $elm$core$Basics$abs = function (n) {
 	return (n < 0) ? (-n) : n;
@@ -5648,6 +5615,53 @@ var $elm$random$Random$uniform = F2(
 			$elm$random$Random$addOne(value),
 			A2($elm$core$List$map, $elm$random$Random$addOne, valueList));
 	});
+var $author$project$Direction$generator = A2(
+	$elm$random$Random$uniform,
+	$author$project$Direction$North,
+	_List_fromArray(
+		[$author$project$Direction$South, $author$project$Direction$East, $author$project$Direction$West]));
+var $elm$random$Random$map2 = F3(
+	function (func, _v0, _v1) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v2 = genA(seed0);
+				var a = _v2.a;
+				var seed1 = _v2.b;
+				var _v3 = genB(seed1);
+				var b = _v3.a;
+				var seed2 = _v3.b;
+				return _Utils_Tuple2(
+					A2(func, a, b),
+					seed2);
+			});
+	});
+var $author$project$Main$ColorUpdate = F3(
+	function (r_delta, g_delta, b_delta) {
+		return {b_delta: b_delta, g_delta: g_delta, r_delta: r_delta};
+	});
+var $elm$random$Random$map3 = F4(
+	function (func, _v0, _v1, _v2) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		var genC = _v2.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v3 = genA(seed0);
+				var a = _v3.a;
+				var seed1 = _v3.b;
+				var _v4 = genB(seed1);
+				var b = _v4.a;
+				var seed2 = _v4.b;
+				var _v5 = genC(seed2);
+				var c = _v5.a;
+				var seed3 = _v5.b;
+				return _Utils_Tuple2(
+					A3(func, a, b, c),
+					seed3);
+			});
+	});
 var $author$project$Main$random_color_update = A4(
 	$elm$random$Random$map3,
 	$author$project$Main$ColorUpdate,
@@ -5666,16 +5680,7 @@ var $author$project$Main$random_color_update = A4(
 		-5,
 		_List_fromArray(
 			[5])));
-var $author$project$Main$East = {$: 'East'};
-var $author$project$Main$North = {$: 'North'};
-var $author$project$Main$South = {$: 'South'};
-var $author$project$Main$West = {$: 'West'};
-var $author$project$Main$random_direction = A2(
-	$elm$random$Random$uniform,
-	$author$project$Main$North,
-	_List_fromArray(
-		[$author$project$Main$South, $author$project$Main$East, $author$project$Main$West]));
-var $author$project$Main$random_circle_update = A3($elm$random$Random$map2, $author$project$Main$CircleUpdate, $author$project$Main$random_direction, $author$project$Main$random_color_update);
+var $author$project$Main$random_circle_update = A3($elm$random$Random$map2, $author$project$Main$CircleUpdate, $author$project$Direction$generator, $author$project$Main$random_color_update);
 var $elm$core$Dict$Red = {$: 'Red'};
 var $elm$core$Dict$balance = F5(
 	function (color, key, value, left, right) {
@@ -5874,7 +5879,7 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{display_text: model.display_text + ' Download? '}),
-					$author$project$Main$getSvg('output'));
+					$author$project$Main$getSvg(_Utils_Tuple0));
 			default:
 				var output = msg.a;
 				return _Utils_Tuple2(
@@ -5890,6 +5895,7 @@ var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
