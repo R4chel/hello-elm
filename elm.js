@@ -5259,14 +5259,7 @@ var $author$project$Main$init = function (_v0) {
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$ChooseDirection = {$: 'ChooseDirection'};
-var $author$project$Main$GotSvg = function (a) {
-	return {$: 'GotSvg', a: a};
-};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $author$project$Main$gotSvg = _Platform_incomingPort(
-	'gotSvg',
-	$elm$json$Json$Decode$null(_Utils_Tuple0));
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$AnimationManager$Time = function (a) {
 	return {$: 'Time', a: a};
@@ -5406,7 +5399,6 @@ var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				$author$project$Main$gotSvg($author$project$Main$GotSvg),
 				model.paused ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrame(
 				function (_v0) {
 					return $author$project$Main$ChooseDirection;
@@ -5873,12 +5865,10 @@ var $author$project$Main$update = F2(
 						model,
 						{paused: !model.paused}),
 					$elm$core$Platform$Cmd$none);
-			case 'GetSvg':
+			default:
 				return _Utils_Tuple2(
 					model,
 					$author$project$Main$getSvg(_Utils_Tuple0));
-			default:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$GetSvg = {$: 'GetSvg'};
@@ -5886,6 +5876,7 @@ var $author$project$Main$TogglePaused = {$: 'TogglePaused'};
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -5895,7 +5886,6 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var $elm$svg$Svg$circle = $elm$svg$Svg$trustedNode('circle');
 var $elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
@@ -5994,6 +5984,7 @@ var $author$project$Main$modelToSvg = function (model) {
 		$elm$svg$Svg$svg,
 		_List_fromArray(
 			[
+				$elm$html$Html$Attributes$id('output'),
 				$elm$svg$Svg$Attributes$width(
 				$elm$core$String$fromInt(model.imageConfig.width)),
 				$elm$svg$Svg$Attributes$height(
@@ -6068,10 +6059,7 @@ var $author$project$Main$view = function (model) {
 				A2($elm$html$Html$br, _List_Nil, _List_Nil),
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$id('output')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						$author$project$Main$modelToSvg(model)

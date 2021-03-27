@@ -25,8 +25,6 @@ import Svg.Attributes exposing (color, cx, cy, fill, height, r, stroke, strokeWi
 
 
 
--- TODO: change snake case to camel case
--- MAIN
 -- MAIN
 
 
@@ -41,16 +39,10 @@ main =
 port getSvg : () -> Cmd msg
 
 
-{-| TODO change to be (() -> msg)
--}
-port gotSvg : (() -> msg) -> Sub msg
-
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ gotSvg GotSvg
-        , if model.paused then
+        [ if model.paused then
             Sub.none
 
           else
@@ -112,7 +104,6 @@ type Msg
     | TogglePaused
     | PrintFoo
     | GetSvg
-    | GotSvg ()
 
 
 step : Model -> CircleUpdate -> Model
@@ -154,9 +145,6 @@ update msg model =
 
         GetSvg ->
             ( model, getSvg () )
-
-        GotSvg () ->
-            ( model, Cmd.none )
 
 
 
