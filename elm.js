@@ -5227,7 +5227,7 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Circle$new_circle = {
+var $author$project$Circle$newCircle = {
 	color: {blue: 100, green: 0, red: 100},
 	position: {x: 10, y: 10}
 };
@@ -5244,22 +5244,22 @@ var $elm$core$Dict$singleton = F2(
 		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
 	});
 var $author$project$Main$init = function (_v0) {
-	var initial_circle = $author$project$Circle$new_circle;
+	var initialCircle = $author$project$Circle$newCircle;
 	return _Utils_Tuple2(
 		{
-			active_circle: initial_circle,
-			display_text: '',
-			imageConfig: {height: 500, position_delta: 5, width: 500},
+			activeCircle: initialCircle,
+			displayText: '',
+			imageConfig: {height: 500, positionDelta: 5, width: 500},
 			output: '',
 			paused: false,
-			visible_circles: A2(
+			visibleCircles: A2(
 				$elm$core$Dict$singleton,
-				_Utils_Tuple2(initial_circle.position.x, initial_circle.position.y),
-				initial_circle.color)
+				_Utils_Tuple2(initialCircle.position.x, initialCircle.position.y),
+				initialCircle.color)
 		},
 		$elm$core$Platform$Cmd$none);
 };
-var $author$project$Main$Choose_direction = {$: 'Choose_direction'};
+var $author$project$Main$ChooseDirection = {$: 'ChooseDirection'};
 var $author$project$Main$GotSvg = function (a) {
 	return {$: 'GotSvg', a: a};
 };
@@ -5408,7 +5408,7 @@ var $author$project$Main$subscriptions = function (model) {
 				$author$project$Main$gotSvg($author$project$Main$GotSvg),
 				model.paused ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrame(
 				function (_v0) {
-					return $author$project$Main$Choose_direction;
+					return $author$project$Main$ChooseDirection;
 				})
 			]));
 };
@@ -5526,8 +5526,8 @@ var $author$project$Main$getSvg = _Platform_outgoingPort(
 	});
 var $elm$core$Basics$not = _Basics_not;
 var $author$project$Circle$CircleUpdate = F2(
-	function (direction, color_update) {
-		return {color_update: color_update, direction: direction};
+	function (direction, colorUpdate) {
+		return {colorUpdate: colorUpdate, direction: direction};
 	});
 var $author$project$Direction$East = {$: 'East'};
 var $author$project$Direction$North = {$: 'North'};
@@ -5639,8 +5639,8 @@ var $elm$random$Random$map2 = F3(
 			});
 	});
 var $author$project$Circle$ColorUpdate = F3(
-	function (r_delta, g_delta, b_delta) {
-		return {b_delta: b_delta, g_delta: g_delta, r_delta: r_delta};
+	function (rDelta, gDelta, bDelta) {
+		return {bDelta: bDelta, gDelta: gDelta, rDelta: rDelta};
 	});
 var $elm$random$Random$map3 = F4(
 	function (func, _v0, _v1, _v2) {
@@ -5663,7 +5663,7 @@ var $elm$random$Random$map3 = F4(
 					seed3);
 			});
 	});
-var $author$project$Circle$random_color_update = A4(
+var $author$project$Circle$randomColorUpdate = A4(
 	$elm$random$Random$map3,
 	$author$project$Circle$ColorUpdate,
 	A2(
@@ -5681,7 +5681,7 @@ var $author$project$Circle$random_color_update = A4(
 		-5,
 		_List_fromArray(
 			[5])));
-var $author$project$Circle$random_circle_update = A3($elm$random$Random$map2, $author$project$Circle$CircleUpdate, $author$project$Direction$generator, $author$project$Circle$random_color_update);
+var $author$project$Circle$randomCircleUpdate = A3($elm$random$Random$map2, $author$project$Circle$CircleUpdate, $author$project$Direction$generator, $author$project$Circle$randomColorUpdate);
 var $elm$core$Dict$Red = {$: 'Red'};
 var $elm$core$Dict$balance = F5(
 	function (color, key, value, left, right) {
@@ -5790,83 +5790,83 @@ var $elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
 	});
-var $author$project$Circle$update_color = F2(
-	function (color, color_update) {
+var $author$project$Circle$updateColor = F2(
+	function (color, colorUpdate) {
 		return {
-			blue: A3($elm$core$Basics$clamp, 0, 255, color.blue + color_update.b_delta),
-			green: A3($elm$core$Basics$clamp, 0, 255, color.green + color_update.g_delta),
-			red: A3($elm$core$Basics$clamp, 0, 255, color.red + color_update.r_delta)
+			blue: A3($elm$core$Basics$clamp, 0, 255, color.blue + colorUpdate.bDelta),
+			green: A3($elm$core$Basics$clamp, 0, 255, color.green + colorUpdate.gDelta),
+			red: A3($elm$core$Basics$clamp, 0, 255, color.red + colorUpdate.rDelta)
 		};
 	});
-var $author$project$Circle$update_position = F3(
+var $author$project$Circle$updatePosition = F3(
 	function (imageConfig, direction, position) {
 		switch (direction.$) {
 			case 'North':
 				return _Utils_update(
 					position,
 					{
-						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y + imageConfig.position_delta)
+						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y + imageConfig.positionDelta)
 					});
 			case 'South':
 				return _Utils_update(
 					position,
 					{
-						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y - imageConfig.position_delta)
+						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y - imageConfig.positionDelta)
 					});
 			case 'East':
 				return _Utils_update(
 					position,
 					{
-						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x + imageConfig.position_delta)
+						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x + imageConfig.positionDelta)
 					});
 			default:
 				return _Utils_update(
 					position,
 					{
-						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x - imageConfig.position_delta)
+						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x - imageConfig.positionDelta)
 					});
 		}
 	});
-var $author$project$Circle$update_circle = F3(
-	function (imageConfig, circle_update, circle) {
+var $author$project$Circle$updateCircle = F3(
+	function (imageConfig, circleUpdate, circle) {
 		return {
-			color: A2($author$project$Circle$update_color, circle.color, circle_update.color_update),
-			position: A3($author$project$Circle$update_position, imageConfig, circle_update.direction, circle.position)
+			color: A2($author$project$Circle$updateColor, circle.color, circleUpdate.colorUpdate),
+			position: A3($author$project$Circle$updatePosition, imageConfig, circleUpdate.direction, circle.position)
 		};
 	});
 var $author$project$Main$step = F2(
-	function (model, circle_update) {
-		var updated_circle = A3($author$project$Circle$update_circle, model.imageConfig, circle_update, model.active_circle);
+	function (model, circleUpdate) {
+		var updatedCircle = A3($author$project$Circle$updateCircle, model.imageConfig, circleUpdate, model.activeCircle);
 		return _Utils_update(
 			model,
 			{
-				active_circle: updated_circle,
-				visible_circles: A3(
+				activeCircle: updatedCircle,
+				visibleCircles: A3(
 					$elm$core$Dict$insert,
-					_Utils_Tuple2(updated_circle.position.x, updated_circle.position.y),
-					updated_circle.color,
-					model.visible_circles)
+					_Utils_Tuple2(updatedCircle.position.x, updatedCircle.position.y),
+					updatedCircle.color,
+					model.visibleCircles)
 			});
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'Step':
-				var circle_update = msg.a;
+				var circleUpdate = msg.a;
 				return _Utils_Tuple2(
-					A2($author$project$Main$step, model, circle_update),
+					A2($author$project$Main$step, model, circleUpdate),
 					$elm$core$Platform$Cmd$none);
-			case 'Choose_direction':
+			case 'ChooseDirection':
 				return _Utils_Tuple2(
 					model,
-					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Circle$random_circle_update));
-			case 'Print_foo':
+					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Circle$randomCircleUpdate));
+			case 'PrintFoo':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{display_text: model.display_text + ' HI! '}),
+						{displayText: model.displayText + ' HI! '}),
 					$elm$core$Platform$Cmd$none);
-			case 'Toggle_paused':
+			case 'TogglePaused':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -5876,19 +5876,19 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{display_text: model.display_text + ' Download? '}),
+						{displayText: model.displayText + ' Download? '}),
 					$author$project$Main$getSvg(_Utils_Tuple0));
 			default:
 				var output = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{display_text: model.display_text + ' TADA!!! ', output: output}),
+						{displayText: model.displayText + ' TADA!!! ', output: output}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$GetSvg = {$: 'GetSvg'};
-var $author$project$Main$Toggle_paused = {$: 'Toggle_paused'};
+var $author$project$Main$TogglePaused = {$: 'TogglePaused'};
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
@@ -6137,7 +6137,7 @@ var $avh4$elm_color$Color$rgb255 = F3(
 			$avh4$elm_color$Color$scaleFrom255(b),
 			1.0);
 	});
-var $author$project$Circle$internal_color_to_color = function (color) {
+var $author$project$Circle$internalColorToColor = function (color) {
 	return A3($avh4$elm_color$Color$rgb255, color.red, color.green, color.blue);
 };
 var $elm$core$String$concat = function (strings) {
@@ -6174,16 +6174,16 @@ var $avh4$elm_color$Color$toCssString = function (_v0) {
 				')'
 			]));
 };
-var $author$project$Circle$internal_color_to_css_color = function (color) {
+var $author$project$Circle$internalColorToCssColor = function (color) {
 	return $avh4$elm_color$Color$toCssString(
-		$author$project$Circle$internal_color_to_color(color));
+		$author$project$Circle$internalColorToColor(color));
 };
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
 	return y;
 };
-var $author$project$Main$view_circle = function (_v0) {
+var $author$project$Main$viewCircle = function (_v0) {
 	var position = _v0.a;
 	var color = _v0.b;
 	return A2(
@@ -6196,20 +6196,20 @@ var $author$project$Main$view_circle = function (_v0) {
 				$elm$core$String$fromInt(position.b)),
 				$elm$svg$Svg$Attributes$r('5'),
 				$elm$svg$Svg$Attributes$fill(
-				$author$project$Circle$internal_color_to_css_color(color))
+				$author$project$Circle$internalColorToCssColor(color))
 			]),
 		_List_Nil);
 };
 var $author$project$Main$pixels = function (model) {
 	return A2(
 		$elm$core$List$map,
-		$author$project$Main$view_circle,
-		$elm$core$Dict$toList(model.visible_circles));
+		$author$project$Main$viewCircle,
+		$elm$core$Dict$toList(model.visibleCircles));
 };
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
-var $author$project$Main$model_to_svg = function (model) {
+var $author$project$Main$modelToSvg = function (model) {
 	return A2(
 		$elm$svg$Svg$svg,
 		_List_fromArray(
@@ -6271,7 +6271,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$Toggle_paused)
+						$elm$html$Html$Events$onClick($author$project$Main$TogglePaused)
 					]),
 				_List_fromArray(
 					[
@@ -6293,7 +6293,7 @@ var $author$project$Main$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(model.display_text)
+						$elm$html$Html$text(model.displayText)
 					])),
 				A2($elm$html$Html$br, _List_Nil, _List_Nil),
 				A2(
@@ -6304,7 +6304,7 @@ var $author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Main$model_to_svg(model)
+						$author$project$Main$modelToSvg(model)
 					])),
 				A2(
 				$elm$html$Html$textarea,

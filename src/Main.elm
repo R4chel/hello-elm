@@ -54,20 +54,20 @@ subscriptions model =
             Sub.none
 
           else
-            onAnimationFrame (\_ -> Choose_direction)
+            onAnimationFrame (\_ -> ChooseDirection)
         ]
 
 
-image_width =
+imageWidth =
     500
 
 
-image_height =
+imageHeight =
     500
 
 
-position_delta : Int
-position_delta =
+positionDelta : Int
+positionDelta =
     10
 
 
@@ -76,9 +76,9 @@ position_delta =
 
 
 type alias Model =
-    { active_circle : Circle
-    , display_text : String
-    , visible_circles : Dict ComparablePosition InternalColor
+    { activeCircle : Circle
+    , displayText : String
+    , visibleCircles : Dict ComparablePosition InternalColor
     , paused : Bool
     , output : String
     , imageConfig : ImageConfig
@@ -88,13 +88,13 @@ type alias Model =
 init : () -> ( Model, Cmd Msg )
 init () =
     let
-        initial_circle =
-            Circle.new_circle
+        initialCircle =
+            Circle.newCircle
     in
-    ( { imageConfig = { height = 500, width = 500, position_delta = 5 }
-      , active_circle = initial_circle
-      , display_text = ""
-      , visible_circles = Dict.singleton ( initial_circle.position.x, initial_circle.position.y ) initial_circle.color
+    ( { imageConfig = { height = 500, width = 500, positionDelta = 5 }
+      , activeCircle = initialCircle
+      , displayText = ""
+      , visibleCircles = Dict.singleton ( initialCircle.position.x, initialCircle.position.y ) initialCircle.color
       , paused = False
       , output = ""
       }
@@ -106,28 +106,28 @@ init () =
 -- UPDATE
 
 
-{-| TODO rename Choose\_direction to something else now that it also includes color update
+{-| TODO rename Choose\\Direction to something else now that it also includes color update
 -}
 type Msg
-    = Choose_direction
+    = ChooseDirection
     | Step CircleUpdate
-    | Toggle_paused
-    | Print_foo
+    | TogglePaused
+    | PrintFoo
     | GetSvg
     | GotSvg String
 
 
 step : Model -> CircleUpdate -> Model
-step model circle_update =
+step model circleUpdate =
     let
-        updated_circle =
-            Circle.update_circle model.imageConfig circle_update model.active_circle
+        updatedCircle =
+            Circle.updateCircle model.imageConfig circleUpdate model.activeCircle
     in
-    { model | active_circle = updated_circle, visible_circles = Dict.insert ( updated_circle.position.x, updated_circle.position.y ) updated_circle.color model.visible_circles }
+    { model | activeCircle = updatedCircle, visibleCircles = Dict.insert ( updatedCircle.position.x, updatedCircle.position.y ) updatedCircle.color model.visibleCircles }
 
 
-download_svg : String -> Cmd Msg
-download_svg svgContent =
+downloadSvg : String -> Cmd Msg
+downloadSvg svgContent =
     Download.string "elm-art.svg" "image/svg+xml" svgContent
 
 
@@ -138,27 +138,27 @@ withNone model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Step circle_update ->
-            ( step model circle_update
+        Step circleUpdate ->
+            ( step model circleUpdate
             , Cmd.none
             )
 
-        Choose_direction ->
-            ( model, Random.generate Step Circle.random_circle_update )
+        ChooseDirection ->
+            ( model, Random.generate Step Circle.randomCircleUpdate )
 
-        Print_foo ->
-            ( { model | display_text = model.display_text ++ " HI! " }, Cmd.none )
+        PrintFoo ->
+            ( { model | displayText = model.displayText ++ " HI! " }, Cmd.none )
 
-        Toggle_paused ->
+        TogglePaused ->
             ( { model | paused = not model.paused }
             , Cmd.none
             )
 
         GetSvg ->
-            ( { model | display_text = model.display_text ++ " Download? " }, getSvg () )
+            ( { model | displayText = model.displayText ++ " Download? " }, getSvg () )
 
         GotSvg output ->
-            ( { model | output = output, display_text = model.display_text ++ " TADA!!! " }, Cmd.none )
+            ( { model | output = output, displayText = model.displayText ++ " TADA!!! " }, Cmd.none )
 
 
 
@@ -168,7 +168,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Toggle_paused ]
+        [ button [ onClick TogglePaused ]
             [ text
                 (if model.paused then
                     "Play"
@@ -182,9 +182,9 @@ view model =
         --     [ text "Download"
         --     ]
         , Html.button [ onClick GetSvg ] [ Html.text "Download" ]
-        , div [] [ text model.display_text ]
+        , div [] [ text model.displayText ]
         , Html.br [] []
-        , div [ Html.Attributes.id "output" ] [ model_to_svg model ]
+        , div [ Html.Attributes.id "output" ] [ modelToSvg model ]
         , Html.textarea
             [ Html.Attributes.rows 10
             , Html.Attributes.style "width" "100%"
@@ -212,16 +212,16 @@ view model =
         ]
 
 
-view_circle : ( ComparablePosition, InternalColor ) -> Svg.Svg msg
-view_circle ( position, color ) =
-    circle [ cx (String.fromInt (Tuple.first position)), cy (String.fromInt (Tuple.second position)), r "5", fill (Circle.internal_color_to_css_color color) ] []
+viewCircle : ( ComparablePosition, InternalColor ) -> Svg.Svg msg
+viewCircle ( position, color ) =
+    circle [ cx (String.fromInt (Tuple.first position)), cy (String.fromInt (Tuple.second position)), r "5", fill (Circle.internalColorToCssColor color) ] []
 
 
 pixels model =
-    Dict.toList model.visible_circles |> List.map view_circle
+    Dict.toList model.visibleCircles |> List.map viewCircle
 
 
-model_to_svg model =
+modelToSvg model =
     svg
         [ width (String.fromInt model.imageConfig.width)
         , height (String.fromInt model.imageConfig.height)
