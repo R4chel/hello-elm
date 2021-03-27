@@ -5227,7 +5227,7 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$new_circle = {
+var $author$project$Circle$new_circle = {
 	color: {blue: 100, green: 0, red: 100},
 	position: {x: 10, y: 10}
 };
@@ -5244,11 +5244,12 @@ var $elm$core$Dict$singleton = F2(
 		return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
 	});
 var $author$project$Main$init = function (_v0) {
-	var initial_circle = $author$project$Main$new_circle;
+	var initial_circle = $author$project$Circle$new_circle;
 	return _Utils_Tuple2(
 		{
 			active_circle: initial_circle,
 			display_text: '',
+			imageConfig: {height: 500, position_delta: 5, width: 500},
 			output: '',
 			paused: false,
 			visible_circles: A2(
@@ -5524,7 +5525,7 @@ var $author$project$Main$getSvg = _Platform_outgoingPort(
 		return $elm$json$Json$Encode$null;
 	});
 var $elm$core$Basics$not = _Basics_not;
-var $author$project$Main$CircleUpdate = F2(
+var $author$project$Circle$CircleUpdate = F2(
 	function (direction, color_update) {
 		return {color_update: color_update, direction: direction};
 	});
@@ -5637,7 +5638,7 @@ var $elm$random$Random$map2 = F3(
 					seed2);
 			});
 	});
-var $author$project$Main$ColorUpdate = F3(
+var $author$project$Circle$ColorUpdate = F3(
 	function (r_delta, g_delta, b_delta) {
 		return {b_delta: b_delta, g_delta: g_delta, r_delta: r_delta};
 	});
@@ -5662,9 +5663,9 @@ var $elm$random$Random$map3 = F4(
 					seed3);
 			});
 	});
-var $author$project$Main$random_color_update = A4(
+var $author$project$Circle$random_color_update = A4(
 	$elm$random$Random$map3,
-	$author$project$Main$ColorUpdate,
+	$author$project$Circle$ColorUpdate,
 	A2(
 		$elm$random$Random$uniform,
 		-5,
@@ -5680,7 +5681,7 @@ var $author$project$Main$random_color_update = A4(
 		-5,
 		_List_fromArray(
 			[5])));
-var $author$project$Main$random_circle_update = A3($elm$random$Random$map2, $author$project$Main$CircleUpdate, $author$project$Direction$generator, $author$project$Main$random_color_update);
+var $author$project$Circle$random_circle_update = A3($elm$random$Random$map2, $author$project$Circle$CircleUpdate, $author$project$Direction$generator, $author$project$Circle$random_color_update);
 var $elm$core$Dict$Red = {$: 'Red'};
 var $elm$core$Dict$balance = F5(
 	function (color, key, value, left, right) {
@@ -5789,7 +5790,7 @@ var $elm$core$Basics$clamp = F3(
 	function (low, high, number) {
 		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
 	});
-var $author$project$Main$update_color = F2(
+var $author$project$Circle$update_color = F2(
 	function (color, color_update) {
 		return {
 			blue: A3($elm$core$Basics$clamp, 0, 255, color.blue + color_update.b_delta),
@@ -5797,48 +5798,45 @@ var $author$project$Main$update_color = F2(
 			red: A3($elm$core$Basics$clamp, 0, 255, color.red + color_update.r_delta)
 		};
 	});
-var $author$project$Main$image_height = 500;
-var $author$project$Main$image_width = 500;
-var $author$project$Main$position_delta = 10;
-var $author$project$Main$update_position = F2(
-	function (c, direction) {
+var $author$project$Circle$update_position = F3(
+	function (imageConfig, direction, position) {
 		switch (direction.$) {
 			case 'North':
 				return _Utils_update(
-					c,
+					position,
 					{
-						y: A3($elm$core$Basics$clamp, 0, $author$project$Main$image_height, c.y + $author$project$Main$position_delta)
+						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y + imageConfig.position_delta)
 					});
 			case 'South':
 				return _Utils_update(
-					c,
+					position,
 					{
-						y: A3($elm$core$Basics$clamp, 0, $author$project$Main$image_height, c.y - $author$project$Main$position_delta)
+						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y - imageConfig.position_delta)
 					});
 			case 'East':
 				return _Utils_update(
-					c,
+					position,
 					{
-						x: A3($elm$core$Basics$clamp, 0, $author$project$Main$image_width, c.x + $author$project$Main$position_delta)
+						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x + imageConfig.position_delta)
 					});
 			default:
 				return _Utils_update(
-					c,
+					position,
 					{
-						x: A3($elm$core$Basics$clamp, 0, $author$project$Main$image_width, c.x - $author$project$Main$position_delta)
+						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x - imageConfig.position_delta)
 					});
 		}
 	});
-var $author$project$Main$update_circle = F2(
-	function (c, circle_update) {
+var $author$project$Circle$update_circle = F3(
+	function (imageConfig, circle_update, circle) {
 		return {
-			color: A2($author$project$Main$update_color, c.color, circle_update.color_update),
-			position: A2($author$project$Main$update_position, c.position, circle_update.direction)
+			color: A2($author$project$Circle$update_color, circle.color, circle_update.color_update),
+			position: A3($author$project$Circle$update_position, imageConfig, circle_update.direction, circle.position)
 		};
 	});
 var $author$project$Main$step = F2(
 	function (model, circle_update) {
-		var updated_circle = A2($author$project$Main$update_circle, model.active_circle, circle_update);
+		var updated_circle = A3($author$project$Circle$update_circle, model.imageConfig, circle_update, model.active_circle);
 		return _Utils_update(
 			model,
 			{
@@ -5861,7 +5859,7 @@ var $author$project$Main$update = F2(
 			case 'Choose_direction':
 				return _Utils_Tuple2(
 					model,
-					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Main$random_circle_update));
+					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Circle$random_circle_update));
 			case 'Print_foo':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -6139,7 +6137,7 @@ var $avh4$elm_color$Color$rgb255 = F3(
 			$avh4$elm_color$Color$scaleFrom255(b),
 			1.0);
 	});
-var $author$project$Main$internal_color_to_color = function (color) {
+var $author$project$Circle$internal_color_to_color = function (color) {
 	return A3($avh4$elm_color$Color$rgb255, color.red, color.green, color.blue);
 };
 var $elm$core$String$concat = function (strings) {
@@ -6176,9 +6174,9 @@ var $avh4$elm_color$Color$toCssString = function (_v0) {
 				')'
 			]));
 };
-var $author$project$Main$internal_color_to_css_color = function (color) {
+var $author$project$Circle$internal_color_to_css_color = function (color) {
 	return $avh4$elm_color$Color$toCssString(
-		$author$project$Main$internal_color_to_color(color));
+		$author$project$Circle$internal_color_to_color(color));
 };
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $elm$core$Tuple$second = function (_v0) {
@@ -6198,7 +6196,7 @@ var $author$project$Main$view_circle = function (_v0) {
 				$elm$core$String$fromInt(position.b)),
 				$elm$svg$Svg$Attributes$r('5'),
 				$elm$svg$Svg$Attributes$fill(
-				$author$project$Main$internal_color_to_css_color(color))
+				$author$project$Circle$internal_color_to_css_color(color))
 			]),
 		_List_Nil);
 };
@@ -6217,9 +6215,9 @@ var $author$project$Main$model_to_svg = function (model) {
 		_List_fromArray(
 			[
 				$elm$svg$Svg$Attributes$width(
-				$elm$core$String$fromInt($author$project$Main$image_width)),
+				$elm$core$String$fromInt(model.imageConfig.width)),
 				$elm$svg$Svg$Attributes$height(
-				$elm$core$String$fromInt($author$project$Main$image_height)),
+				$elm$core$String$fromInt(model.imageConfig.height)),
 				$elm$svg$Svg$Attributes$viewBox(
 				A2(
 					$elm$core$String$join,
@@ -6228,8 +6226,8 @@ var $author$project$Main$model_to_svg = function (model) {
 						[
 							'0',
 							'0',
-							$elm$core$String$fromInt($author$project$Main$image_width),
-							$elm$core$String$fromInt($author$project$Main$image_height)
+							$elm$core$String$fromInt(model.imageConfig.width),
+							$elm$core$String$fromInt(model.imageConfig.height)
 						])))
 			]),
 		$author$project$Main$pixels(model));
