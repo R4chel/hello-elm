@@ -6,6 +6,8 @@ port module Main exposing (..)
 --   https://guide.elm-lang.org/architecture/buttons.html
 --
 
+import Array exposing (Array)
+import Array.Extra as Array
 import Base64 exposing (decode, encode)
 import Basics exposing (Float, Int, modBy)
 import Browser
@@ -71,7 +73,7 @@ type alias Model =
     { imageConfig : ImageConfig
     , activeCircle : Circle
     , displayText : String
-    , visibleCircles : Dict ComparablePosition InternalColor
+    , visibleCircles : Array Circle
     , paused : Bool
     }
 
@@ -82,10 +84,10 @@ init () =
         initialCircle =
             Circle.newCircle
     in
-    ( { imageConfig = { height = 500, width = 500, positionDelta = 5 }
+    ( { imageConfig = { height = 500, width = 500, positionDelta = 5, maxCircles = 1000 }
       , activeCircle = initialCircle
       , displayText = ""
-      , visibleCircles = Dict.singleton ( initialCircle.position.x, initialCircle.position.y ) initialCircle.color
+      , visibleCircles = Array.fromList [ initialCircle ]
       , paused = False
       }
     , Cmd.none
@@ -112,7 +114,14 @@ step model circleUpdate =
         updatedCircle =
             Circle.updateCircle model.imageConfig circleUpdate model.activeCircle
     in
-    { model | activeCircle = updatedCircle, visibleCircles = Dict.insert ( updatedCircle.position.x, updatedCircle.position.y ) updatedCircle.color model.visibleCircles }
+    { model
+        | activeCircle = updatedCircle
+        , visibleCircles =
+            Array.push
+                updatedCircle
+                model.visibleCircles
+                |> Array.sliceFrom (-1 * model.imageConfig.maxCircles)
+    }
 
 
 downloadSvg : String -> Cmd Msg
@@ -170,13 +179,13 @@ view model =
         ]
 
 
-viewCircle : ( ComparablePosition, InternalColor ) -> Svg.Svg msg
-viewCircle ( position, color ) =
-    circle [ cx (String.fromInt (Tuple.first position)), cy (String.fromInt (Tuple.second position)), r "5", fill (Circle.internalColorToCssColor color) ] []
+viewCircle : Circle -> Svg.Svg msg
+viewCircle c =
+    circle [ cx (String.fromInt c.position.x), cy (String.fromInt c.position.y), r "5", fill (Circle.fillColor c) ] []
 
 
 pixels model =
-    Dict.toList model.visibleCircles |> List.map viewCircle
+    Array.toList model.visibleCircles |> List.map viewCircle
 
 
 modelToSvg model =

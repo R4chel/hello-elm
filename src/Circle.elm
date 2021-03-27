@@ -1,4 +1,4 @@
-module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, internalColorToCssColor, newCircle, randomCircleUpdate, updateCircle)
+module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, fillColor, newCircle, randomCircleUpdate, updateCircle)
 
 import Color exposing (Color)
 import Direction exposing (Direction(..))
@@ -112,3 +112,8 @@ updateCircle imageConfig circleUpdate circle =
     { position = updatePosition imageConfig circleUpdate.direction circle.position
     , color = updateColor circle.color circleUpdate.colorUpdate
     }
+
+
+fillColor : Circle -> String
+fillColor circle =
+    internalColorToCssColor circle.color
