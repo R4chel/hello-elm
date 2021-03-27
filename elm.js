@@ -5262,9 +5262,41 @@ var $elm$core$Array$fromList = function (list) {
 		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
 	}
 };
+var $author$project$ImageConfig$UpdatePositionDelta = function (a) {
+	return {$: 'UpdatePositionDelta', a: a};
+};
+var $carwow$elm_slider$SingleSlider$SingleSlider = function (a) {
+	return {$: 'SingleSlider', a: a};
+};
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $carwow$elm_slider$RangeSlider$defaultLabelFormatter = function (value) {
+	return $elm$core$String$fromFloat(value);
+};
+var $carwow$elm_slider$RangeSlider$defaultValueFormatter = F2(
+	function (value, max) {
+		return _Utils_eq(value, max) ? '' : $elm$core$String$fromFloat(value);
+	});
+var $carwow$elm_slider$SingleSlider$init = function (attrs) {
+	return $carwow$elm_slider$SingleSlider$SingleSlider(
+		{
+			commonAttributes: {max: attrs.max, maxFormatter: $carwow$elm_slider$RangeSlider$defaultLabelFormatter, min: attrs.min, minFormatter: $carwow$elm_slider$RangeSlider$defaultLabelFormatter, step: attrs.step},
+			valueAttributes: {change: attrs.onChange, formatter: $carwow$elm_slider$RangeSlider$defaultValueFormatter, value: attrs.value}
+		});
+};
+var $author$project$ImageConfig$init = function (_v0) {
+	return {
+		height: 500,
+		maxCircles: 1000,
+		positionDelta: 5,
+		positionDeltaSlider: $carwow$elm_slider$SingleSlider$init(
+			{max: 100, min: 0, onChange: $author$project$ImageConfig$UpdatePositionDelta, step: 1, value: 5}),
+		width: 500
+	};
+};
 var $author$project$Circle$newCircle = {
 	color: {blue: 100, green: 0, red: 100},
-	position: {x: 10, y: 10}
+	position: {x: 10, y: 10},
+	radius: 5
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
@@ -5274,7 +5306,7 @@ var $author$project$Main$init = function (_v0) {
 		{
 			activeCircle: initialCircle,
 			displayText: '',
-			imageConfig: {height: 500, maxCircles: 1000, positionDelta: 5, width: 500},
+			imageConfig: $author$project$ImageConfig$init(_Utils_Tuple0),
 			paused: false,
 			visibleCircles: $elm$core$Array$fromList(
 				_List_fromArray(
@@ -6065,7 +6097,8 @@ var $author$project$Circle$updateCircle = F3(
 	function (imageConfig, circleUpdate, circle) {
 		return {
 			color: A2($author$project$Circle$updateColor, circle.color, circleUpdate.colorUpdate),
-			position: A3($author$project$Circle$updatePosition, imageConfig, circleUpdate.direction, circle.position)
+			position: A3($author$project$Circle$updatePosition, imageConfig, circleUpdate.direction, circle.position),
+			radius: circle.radius
 		};
 	});
 var $author$project$Main$step = F2(
@@ -6079,6 +6112,16 @@ var $author$project$Main$step = F2(
 					$elm_community$array_extra$Array$Extra$sliceFrom,
 					(-1) * model.imageConfig.maxCircles,
 					A2($elm$core$Array$push, updatedCircle, model.visibleCircles))
+			});
+	});
+var $elm$core$Basics$round = _Basics_round;
+var $author$project$ImageConfig$update = F2(
+	function (msg, imageConfig) {
+		var delta = msg.a;
+		return _Utils_update(
+			imageConfig,
+			{
+				positionDelta: $elm$core$Basics$round(delta)
 			});
 	});
 var $author$project$Main$update = F2(
@@ -6105,17 +6148,31 @@ var $author$project$Main$update = F2(
 						model,
 						{paused: !model.paused}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'GetSvg':
 				return _Utils_Tuple2(
 					model,
 					$author$project$Main$getSvg(_Utils_Tuple0));
+			default:
+				var imageConfigUpdate = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							imageConfig: A2($author$project$ImageConfig$update, imageConfigUpdate, model.imageConfig)
+						}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$GetSvg = {$: 'GetSvg'};
 var $author$project$Main$TogglePaused = {$: 'TogglePaused'};
+var $author$project$Main$UpdateImageConfig = function (a) {
+	return {$: 'UpdateImageConfig', a: a};
+};
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
+var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
@@ -6153,8 +6210,6 @@ var $author$project$Circle$internalColorToColor = function (color) {
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$core$Basics$round = _Basics_round;
 var $avh4$elm_color$Color$toCssString = function (_v0) {
 	var r = _v0.a;
 	var g = _v0.b;
@@ -6201,7 +6256,8 @@ var $author$project$Main$viewCircle = function (c) {
 				$elm$core$String$fromInt(c.position.x)),
 				$elm$svg$Svg$Attributes$cy(
 				$elm$core$String$fromInt(c.position.y)),
-				$elm$svg$Svg$Attributes$r('5'),
+				$elm$svg$Svg$Attributes$r(
+				$elm$core$String$fromInt(c.radius)),
 				$elm$svg$Svg$Attributes$fill(
 				$author$project$Circle$fillColor(c))
 			]),
@@ -6259,6 +6315,633 @@ var $elm$html$Html$Events$onClick = function (msg) {
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$core$String$toFloat = _String_toFloat;
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $carwow$elm_slider$SingleSlider$inputDecoder = A2(
+	$elm$json$Json$Decode$map,
+	function (value) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			0,
+			$elm$core$String$toFloat(value));
+	},
+	$elm$html$Html$Events$targetValue);
+var $elm$json$Json$Decode$map3 = _Json_map3;
+var $elm$json$Json$Decode$float = _Json_decodeFloat;
+var $debois$elm_dom$DOM$offsetHeight = A2($elm$json$Json$Decode$field, 'offsetHeight', $elm$json$Json$Decode$float);
+var $debois$elm_dom$DOM$offsetWidth = A2($elm$json$Json$Decode$field, 'offsetWidth', $elm$json$Json$Decode$float);
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$map4 = _Json_map4;
+var $debois$elm_dom$DOM$offsetLeft = A2($elm$json$Json$Decode$field, 'offsetLeft', $elm$json$Json$Decode$float);
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $debois$elm_dom$DOM$offsetParent = F2(
+	function (x, decoder) {
+		return $elm$json$Json$Decode$oneOf(
+			_List_fromArray(
+				[
+					A2(
+					$elm$json$Json$Decode$field,
+					'offsetParent',
+					$elm$json$Json$Decode$null(x)),
+					A2($elm$json$Json$Decode$field, 'offsetParent', decoder)
+				]));
+	});
+var $debois$elm_dom$DOM$offsetTop = A2($elm$json$Json$Decode$field, 'offsetTop', $elm$json$Json$Decode$float);
+var $debois$elm_dom$DOM$scrollLeft = A2($elm$json$Json$Decode$field, 'scrollLeft', $elm$json$Json$Decode$float);
+var $debois$elm_dom$DOM$scrollTop = A2($elm$json$Json$Decode$field, 'scrollTop', $elm$json$Json$Decode$float);
+var $debois$elm_dom$DOM$position = F2(
+	function (x, y) {
+		return A2(
+			$elm$json$Json$Decode$andThen,
+			function (_v0) {
+				var x_ = _v0.a;
+				var y_ = _v0.b;
+				return A2(
+					$debois$elm_dom$DOM$offsetParent,
+					_Utils_Tuple2(x_, y_),
+					A2($debois$elm_dom$DOM$position, x_, y_));
+			},
+			A5(
+				$elm$json$Json$Decode$map4,
+				F4(
+					function (scrollLeftP, scrollTopP, offsetLeftP, offsetTopP) {
+						return _Utils_Tuple2((x + offsetLeftP) - scrollLeftP, (y + offsetTopP) - scrollTopP);
+					}),
+				$debois$elm_dom$DOM$scrollLeft,
+				$debois$elm_dom$DOM$scrollTop,
+				$debois$elm_dom$DOM$offsetLeft,
+				$debois$elm_dom$DOM$offsetTop));
+	});
+var $debois$elm_dom$DOM$boundingClientRect = A4(
+	$elm$json$Json$Decode$map3,
+	F3(
+		function (_v0, width, height) {
+			var x = _v0.a;
+			var y = _v0.b;
+			return {height: height, left: x, top: y, width: width};
+		}),
+	A2($debois$elm_dom$DOM$position, 0, 0),
+	$debois$elm_dom$DOM$offsetWidth,
+	$debois$elm_dom$DOM$offsetHeight);
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $myrho$elm_round$Round$funNum = F3(
+	function (fun, s, fl) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			0 / 0,
+			$elm$core$String$toFloat(
+				A2(fun, s, fl)));
+	});
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$Basics$neq = _Utils_notEqual;
+var $elm$core$String$foldr = _String_foldr;
+var $elm$core$String$toList = function (string) {
+	return A3($elm$core$String$foldr, $elm$core$List$cons, _List_Nil, string);
+};
+var $myrho$elm_round$Round$addSign = F2(
+	function (signed, str) {
+		var isNotZero = A2(
+			$elm$core$List$any,
+			function (c) {
+				return (!_Utils_eq(
+					c,
+					_Utils_chr('0'))) && (!_Utils_eq(
+					c,
+					_Utils_chr('.')));
+			},
+			$elm$core$String$toList(str));
+		return _Utils_ap(
+			(signed && isNotZero) ? '-' : '',
+			str);
+	});
+var $elm$core$String$cons = _String_cons;
+var $elm$core$Char$fromCode = _Char_fromCode;
+var $myrho$elm_round$Round$increaseNum = function (_v0) {
+	var head = _v0.a;
+	var tail = _v0.b;
+	if (_Utils_eq(
+		head,
+		_Utils_chr('9'))) {
+		var _v1 = $elm$core$String$uncons(tail);
+		if (_v1.$ === 'Nothing') {
+			return '01';
+		} else {
+			var headtail = _v1.a;
+			return A2(
+				$elm$core$String$cons,
+				_Utils_chr('0'),
+				$myrho$elm_round$Round$increaseNum(headtail));
+		}
+	} else {
+		var c = $elm$core$Char$toCode(head);
+		return ((c >= 48) && (c < 57)) ? A2(
+			$elm$core$String$cons,
+			$elm$core$Char$fromCode(c + 1),
+			tail) : '0';
+	}
+};
+var $elm$core$Basics$isInfinite = _Basics_isInfinite;
+var $elm$core$Basics$isNaN = _Basics_isNaN;
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$core$String$fromChar = function (_char) {
+	return A2($elm$core$String$cons, _char, '');
+};
+var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
+var $elm$core$String$repeatHelp = F3(
+	function (n, chunk, result) {
+		return (n <= 0) ? result : A3(
+			$elm$core$String$repeatHelp,
+			n >> 1,
+			_Utils_ap(chunk, chunk),
+			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+	});
+var $elm$core$String$repeat = F2(
+	function (n, chunk) {
+		return A3($elm$core$String$repeatHelp, n, chunk, '');
+	});
+var $elm$core$String$padRight = F3(
+	function (n, _char, string) {
+		return _Utils_ap(
+			string,
+			A2(
+				$elm$core$String$repeat,
+				n - $elm$core$String$length(string),
+				$elm$core$String$fromChar(_char)));
+	});
+var $elm$core$String$reverse = _String_reverse;
+var $myrho$elm_round$Round$splitComma = function (str) {
+	var _v0 = A2($elm$core$String$split, '.', str);
+	if (_v0.b) {
+		if (_v0.b.b) {
+			var before = _v0.a;
+			var _v1 = _v0.b;
+			var after = _v1.a;
+			return _Utils_Tuple2(before, after);
+		} else {
+			var before = _v0.a;
+			return _Utils_Tuple2(before, '0');
+		}
+	} else {
+		return _Utils_Tuple2('0', '0');
+	}
+};
+var $elm$core$Tuple$mapFirst = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			func(x),
+			y);
+	});
+var $myrho$elm_round$Round$toDecimal = function (fl) {
+	var _v0 = A2(
+		$elm$core$String$split,
+		'e',
+		$elm$core$String$fromFloat(
+			$elm$core$Basics$abs(fl)));
+	if (_v0.b) {
+		if (_v0.b.b) {
+			var num = _v0.a;
+			var _v1 = _v0.b;
+			var exp = _v1.a;
+			var e = A2(
+				$elm$core$Maybe$withDefault,
+				0,
+				$elm$core$String$toInt(
+					A2($elm$core$String$startsWith, '+', exp) ? A2($elm$core$String$dropLeft, 1, exp) : exp));
+			var _v2 = $myrho$elm_round$Round$splitComma(num);
+			var before = _v2.a;
+			var after = _v2.b;
+			var total = _Utils_ap(before, after);
+			var zeroed = (e < 0) ? A2(
+				$elm$core$Maybe$withDefault,
+				'0',
+				A2(
+					$elm$core$Maybe$map,
+					function (_v3) {
+						var a = _v3.a;
+						var b = _v3.b;
+						return a + ('.' + b);
+					},
+					A2(
+						$elm$core$Maybe$map,
+						$elm$core$Tuple$mapFirst($elm$core$String$fromChar),
+						$elm$core$String$uncons(
+							_Utils_ap(
+								A2(
+									$elm$core$String$repeat,
+									$elm$core$Basics$abs(e),
+									'0'),
+								total))))) : A3(
+				$elm$core$String$padRight,
+				e + 1,
+				_Utils_chr('0'),
+				total);
+			return _Utils_ap(
+				(fl < 0) ? '-' : '',
+				zeroed);
+		} else {
+			var num = _v0.a;
+			return _Utils_ap(
+				(fl < 0) ? '-' : '',
+				num);
+		}
+	} else {
+		return '';
+	}
+};
+var $myrho$elm_round$Round$roundFun = F3(
+	function (functor, s, fl) {
+		if ($elm$core$Basics$isInfinite(fl) || $elm$core$Basics$isNaN(fl)) {
+			return $elm$core$String$fromFloat(fl);
+		} else {
+			var signed = fl < 0;
+			var _v0 = $myrho$elm_round$Round$splitComma(
+				$myrho$elm_round$Round$toDecimal(
+					$elm$core$Basics$abs(fl)));
+			var before = _v0.a;
+			var after = _v0.b;
+			var r = $elm$core$String$length(before) + s;
+			var normalized = _Utils_ap(
+				A2($elm$core$String$repeat, (-r) + 1, '0'),
+				A3(
+					$elm$core$String$padRight,
+					r,
+					_Utils_chr('0'),
+					_Utils_ap(before, after)));
+			var totalLen = $elm$core$String$length(normalized);
+			var roundDigitIndex = A2($elm$core$Basics$max, 1, r);
+			var increase = A2(
+				functor,
+				signed,
+				A3($elm$core$String$slice, roundDigitIndex, totalLen, normalized));
+			var remains = A3($elm$core$String$slice, 0, roundDigitIndex, normalized);
+			var num = increase ? $elm$core$String$reverse(
+				A2(
+					$elm$core$Maybe$withDefault,
+					'1',
+					A2(
+						$elm$core$Maybe$map,
+						$myrho$elm_round$Round$increaseNum,
+						$elm$core$String$uncons(
+							$elm$core$String$reverse(remains))))) : remains;
+			var numLen = $elm$core$String$length(num);
+			var numZeroed = (num === '0') ? num : ((s <= 0) ? _Utils_ap(
+				num,
+				A2(
+					$elm$core$String$repeat,
+					$elm$core$Basics$abs(s),
+					'0')) : ((_Utils_cmp(
+				s,
+				$elm$core$String$length(after)) < 0) ? (A3($elm$core$String$slice, 0, numLen - s, num) + ('.' + A3($elm$core$String$slice, numLen - s, numLen, num))) : _Utils_ap(
+				before + '.',
+				A3(
+					$elm$core$String$padRight,
+					s,
+					_Utils_chr('0'),
+					after))));
+			return A2($myrho$elm_round$Round$addSign, signed, numZeroed);
+		}
+	});
+var $myrho$elm_round$Round$round = $myrho$elm_round$Round$roundFun(
+	F2(
+		function (signed, str) {
+			var _v0 = $elm$core$String$uncons(str);
+			if (_v0.$ === 'Nothing') {
+				return false;
+			} else {
+				if ('5' === _v0.a.a.valueOf()) {
+					if (_v0.a.b === '') {
+						var _v1 = _v0.a;
+						return !signed;
+					} else {
+						var _v2 = _v0.a;
+						return true;
+					}
+				} else {
+					var _v3 = _v0.a;
+					var _int = _v3.a;
+					return function (i) {
+						return ((i > 53) && signed) || ((i >= 53) && (!signed));
+					}(
+						$elm$core$Char$toCode(_int));
+				}
+			}
+		}));
+var $myrho$elm_round$Round$roundNum = $myrho$elm_round$Round$funNum($myrho$elm_round$Round$round);
+var $carwow$elm_slider$RangeSlider$snapValue = F2(
+	function (value, step) {
+		var stepDecimals = $elm$core$List$head(
+			A2(
+				$elm$core$List$drop,
+				1,
+				A2(
+					$elm$core$String$split,
+					'.',
+					$elm$core$String$fromFloat(step))));
+		var precision = function () {
+			if (stepDecimals.$ === 'Just') {
+				var s = stepDecimals.a;
+				return $elm$core$String$length(s);
+			} else {
+				return 0;
+			}
+		}();
+		return A2(
+			$myrho$elm_round$Round$roundNum,
+			precision,
+			$elm$core$Basics$round(value / step) * step);
+	});
+var $carwow$elm_slider$SingleSlider$onOutsideRangeClick = function (_v0) {
+	var slider = _v0.a;
+	var commonAttributes = slider.commonAttributes;
+	var valueDecoder = A3(
+		$elm$json$Json$Decode$map2,
+		F2(
+			function (rectangle, mouseX) {
+				var clickedValue = (((commonAttributes.max - commonAttributes.min) / rectangle.width) * mouseX) + commonAttributes.min;
+				return A2($carwow$elm_slider$RangeSlider$snapValue, clickedValue, commonAttributes.step);
+			}),
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['target']),
+			$debois$elm_dom$DOM$boundingClientRect),
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['offsetX']),
+			$elm$json$Json$Decode$float));
+	return A2($elm$json$Json$Decode$map, slider.valueAttributes.change, valueDecoder);
+};
+var $carwow$elm_slider$RangeSlider$onClick = function (decoder) {
+	return A2($elm$html$Html$Events$on, 'click', decoder);
+};
+var $carwow$elm_slider$SingleSlider$onInsideRangeClick = function (_v0) {
+	var commonAttributes = _v0.a.commonAttributes;
+	var valueAttributes = _v0.a.valueAttributes;
+	var valueDecoder = A3(
+		$elm$json$Json$Decode$map2,
+		F2(
+			function (rectangle, mouseX) {
+				var adjustedValue = A3($elm$core$Basics$clamp, commonAttributes.min, commonAttributes.max, valueAttributes.value);
+				var newValue = $elm$core$Basics$round((adjustedValue / rectangle.width) * mouseX);
+				var adjustedNewValue = A3($elm$core$Basics$clamp, commonAttributes.min, commonAttributes.max, newValue);
+				return A2($carwow$elm_slider$RangeSlider$snapValue, adjustedNewValue, commonAttributes.step);
+			}),
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['target']),
+			$debois$elm_dom$DOM$boundingClientRect),
+		A2(
+			$elm$json$Json$Decode$at,
+			_List_fromArray(
+				['offsetX']),
+			$elm$json$Json$Decode$float));
+	return A2($elm$json$Json$Decode$map, valueAttributes.change, valueDecoder);
+};
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $carwow$elm_slider$SingleSlider$progressView = function (_v0) {
+	var slider = _v0.a;
+	var commonAttributes = slider.commonAttributes;
+	var valueAttributes = slider.valueAttributes;
+	var value = A3($elm$core$Basics$clamp, commonAttributes.min, commonAttributes.max, valueAttributes.value);
+	var progressRatio = 100 / (commonAttributes.max - commonAttributes.min);
+	var progress = (commonAttributes.max - value) * progressRatio;
+	var progressAttributes = _List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('input-range__progress'),
+			A2($elm$html$Html$Attributes$style, 'left', '0.0%'),
+			A2(
+			$elm$html$Html$Attributes$style,
+			'right',
+			$elm$core$String$fromFloat(progress) + '%'),
+			$carwow$elm_slider$RangeSlider$onClick(
+			$carwow$elm_slider$SingleSlider$onInsideRangeClick(
+				$carwow$elm_slider$SingleSlider$SingleSlider(slider)))
+		]);
+	return A2($elm$html$Html$div, progressAttributes, _List_Nil);
+};
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $elm$html$Html$Attributes$classList = function (classes) {
+	return $elm$html$Html$Attributes$class(
+		A2(
+			$elm$core$String$join,
+			' ',
+			A2(
+				$elm$core$List$map,
+				$elm$core$Tuple$first,
+				A2($elm$core$List$filter, $elm$core$Tuple$second, classes))));
+};
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$html$Html$Attributes$min = $elm$html$Html$Attributes$stringProperty('min');
+var $carwow$elm_slider$RangeSlider$onChange = F2(
+	function (msg, input) {
+		return A2(
+			$elm$html$Html$Events$on,
+			'change',
+			A2($elm$json$Json$Decode$map, msg, input));
+	});
+var $carwow$elm_slider$RangeSlider$onInput = F2(
+	function (msg, input) {
+		return A2(
+			$elm$html$Html$Events$on,
+			'input',
+			A2($elm$json$Json$Decode$map, msg, input));
+	});
+var $elm$html$Html$Attributes$step = function (n) {
+	return A2($elm$html$Html$Attributes$stringProperty, 'step', n);
+};
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $carwow$elm_slider$RangeSlider$sliderInputView = F4(
+	function (commonAttributes, valueAttributes, input, extraClasses) {
+		return A2(
+			$elm$html$Html$input,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$type_('range'),
+					$elm$html$Html$Attributes$min(
+					$elm$core$String$fromFloat(commonAttributes.min)),
+					$elm$html$Html$Attributes$max(
+					$elm$core$String$fromFloat(commonAttributes.max)),
+					$elm$html$Html$Attributes$step(
+					$elm$core$String$fromFloat(commonAttributes.step)),
+					$elm$html$Html$Attributes$value(
+					$elm$core$String$fromFloat(valueAttributes.value)),
+					$elm$html$Html$Attributes$class('input-range'),
+					$elm$html$Html$Attributes$classList(
+					A2(
+						$elm$core$List$map,
+						function (c) {
+							return _Utils_Tuple2(c, true);
+						},
+						extraClasses)),
+					A2($carwow$elm_slider$RangeSlider$onChange, valueAttributes.change, input),
+					A2($carwow$elm_slider$RangeSlider$onInput, valueAttributes.change, input)
+				]),
+			_List_Nil);
+	});
+var $carwow$elm_slider$RangeSlider$sliderTrackView = function (decoder) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('input-range__track'),
+				$carwow$elm_slider$RangeSlider$onClick(decoder)
+			]),
+		_List_Nil);
+};
+var $carwow$elm_slider$SingleSlider$view = function (_v0) {
+	var slider = _v0.a;
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('input-range-container')
+					]),
+				_List_fromArray(
+					[
+						A4($carwow$elm_slider$RangeSlider$sliderInputView, slider.commonAttributes, slider.valueAttributes, $carwow$elm_slider$SingleSlider$inputDecoder, _List_Nil),
+						$carwow$elm_slider$RangeSlider$sliderTrackView(
+						$carwow$elm_slider$SingleSlider$onOutsideRangeClick(
+							$carwow$elm_slider$SingleSlider$SingleSlider(slider))),
+						$carwow$elm_slider$SingleSlider$progressView(
+						$carwow$elm_slider$SingleSlider$SingleSlider(slider))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('input-range-labels-container')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-range-label')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								slider.commonAttributes.minFormatter(slider.commonAttributes.min))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-range-label input-range-label--current-value')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								A2(slider.valueAttributes.formatter, slider.valueAttributes.value, slider.commonAttributes.max))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-range-label')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								slider.commonAttributes.maxFormatter(slider.commonAttributes.max))
+							]))
+					]))
+			]));
+};
+var $author$project$ImageConfig$view = function (imageConfig) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$carwow$elm_slider$SingleSlider$view(imageConfig.positionDeltaSlider)
+			]));
+};
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6285,6 +6968,18 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Download')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$map,
+						function (x) {
+							return $author$project$Main$UpdateImageConfig(x);
+						},
+						$author$project$ImageConfig$view(model.imageConfig))
 					])),
 				A2(
 				$elm$html$Html$div,

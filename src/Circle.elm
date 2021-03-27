@@ -71,12 +71,13 @@ internalColorToCssColor color =
 type alias Circle =
     { position : Position
     , color : InternalColor
+    , radius : Int
     }
 
 
 newCircle : Circle
 newCircle =
-    { position = { x = 10, y = 10 }, color = { red = 100, green = 0, blue = 100 } }
+    { position = { x = 10, y = 10 }, color = { red = 100, green = 0, blue = 100 }, radius = 5 }
 
 
 
@@ -111,6 +112,7 @@ updateCircle : ImageConfig -> CircleUpdate -> Circle -> Circle
 updateCircle imageConfig circleUpdate circle =
     { position = updatePosition imageConfig circleUpdate.direction circle.position
     , color = updateColor circle.color circleUpdate.colorUpdate
+    , radius = circle.radius
     }
 
 

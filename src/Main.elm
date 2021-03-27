@@ -52,19 +52,6 @@ subscriptions model =
         ]
 
 
-imageWidth =
-    500
-
-
-imageHeight =
-    500
-
-
-positionDelta : Int
-positionDelta =
-    10
-
-
 
 -- MODEL
 
@@ -84,7 +71,7 @@ init () =
         initialCircle =
             Circle.newCircle
     in
-    ( { imageConfig = { height = 500, width = 500, positionDelta = 5, maxCircles = 1000 }
+    ( { imageConfig = ImageConfig.init ()
       , activeCircle = initialCircle
       , displayText = ""
       , visibleCircles = Array.fromList [ initialCircle ]
@@ -106,6 +93,7 @@ type Msg
     | TogglePaused
     | PrintFoo
     | GetSvg
+    | UpdateImageConfig ImageConfig.Msg
 
 
 step : Model -> CircleUpdate -> Model
@@ -155,6 +143,15 @@ update msg model =
         GetSvg ->
             ( model, getSvg () )
 
+        UpdateImageConfig imageConfigUpdate ->
+            ( { model
+                | imageConfig =
+                    ImageConfig.update imageConfigUpdate
+                        model.imageConfig
+              }
+            , Cmd.none
+            )
+
 
 
 -- VIEW
@@ -173,6 +170,7 @@ view model =
                 )
             ]
         , Html.button [ onClick GetSvg ] [ Html.text "Download" ]
+        , div [] [ ImageConfig.view model.imageConfig |> Html.map (\x -> UpdateImageConfig x) ]
         , div [] [ text model.displayText ]
         , Html.br [] []
         , div [] [ modelToSvg model ]
@@ -181,7 +179,7 @@ view model =
 
 viewCircle : Circle -> Svg.Svg msg
 viewCircle c =
-    circle [ cx (String.fromInt c.position.x), cy (String.fromInt c.position.y), r "5", fill (Circle.fillColor c) ] []
+    circle [ cx (String.fromInt c.position.x), cy (String.fromInt c.position.y), r (String.fromInt c.radius), fill (Circle.fillColor c) ] []
 
 
 pixels model =
