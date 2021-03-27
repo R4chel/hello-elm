@@ -10,11 +10,12 @@ import SingleSlider exposing (SingleSlider)
 
 
 type alias ImageConfig =
-    { height : Int, width : Int, positionDelta : Int, maxCircles : Int, positionDeltaSlider : SingleSlider Msg }
+    { height : Int, width : Int, positionDelta : Int, maxCircles : Int, positionDeltaSlider : SingleSlider Msg, maxCirclesSlider : SingleSlider Msg }
 
 
 
 -- INIT
+-- TODO: don't need both slider and values in config, slider contains value
 
 
 init : () -> ImageConfig
@@ -24,6 +25,7 @@ init () =
     , positionDelta = 5
     , maxCircles = 1000
     , positionDeltaSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdatePositionDelta, step = 1 }
+    , maxCirclesSlider = SingleSlider.init { min = 1, max = 10000, value = 500, onChange = UpdateMaxCircles, step = 100 }
     }
 
 
@@ -33,6 +35,7 @@ init () =
 
 type Msg
     = UpdatePositionDelta Float
+    | UpdateMaxCircles Float
 
 
 update : Msg -> ImageConfig -> ImageConfig
@@ -48,6 +51,16 @@ update msg imageConfig =
                 , positionDeltaSlider = SingleSlider.update new_value imageConfig.positionDeltaSlider
             }
 
+        UpdateMaxCircles new_value ->
+            let
+                value =
+                    round new_value
+            in
+            { imageConfig
+                | maxCircles = value
+                , maxCirclesSlider = SingleSlider.update new_value imageConfig.maxCirclesSlider
+            }
+
 
 
 -- VIEW
@@ -55,4 +68,4 @@ update msg imageConfig =
 
 view : ImageConfig -> Html Msg
 view imageConfig =
-    div [] [ SingleSlider.view imageConfig.positionDeltaSlider ]
+    div [] [ SingleSlider.view imageConfig.positionDeltaSlider, SingleSlider.view imageConfig.maxCirclesSlider ]
