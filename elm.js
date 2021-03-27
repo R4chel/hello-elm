@@ -6115,13 +6115,27 @@ var $author$project$Main$step = F2(
 			});
 	});
 var $elm$core$Basics$round = _Basics_round;
+var $carwow$elm_slider$SingleSlider$update = F2(
+	function (value, _v0) {
+		var slider = _v0.a;
+		var valueAttributes = slider.valueAttributes;
+		return $carwow$elm_slider$SingleSlider$SingleSlider(
+			{
+				commonAttributes: slider.commonAttributes,
+				valueAttributes: _Utils_update(
+					valueAttributes,
+					{value: value})
+			});
+	});
 var $author$project$ImageConfig$update = F2(
 	function (msg, imageConfig) {
-		var delta = msg.a;
+		var new_value = msg.a;
+		var value = $elm$core$Basics$round(new_value);
 		return _Utils_update(
 			imageConfig,
 			{
-				positionDelta: $elm$core$Basics$round(delta)
+				positionDelta: value,
+				positionDeltaSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.positionDeltaSlider)
 			});
 	});
 var $author$project$Main$update = F2(

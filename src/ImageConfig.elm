@@ -38,8 +38,15 @@ type Msg
 update : Msg -> ImageConfig -> ImageConfig
 update msg imageConfig =
     case msg of
-        UpdatePositionDelta delta ->
-            { imageConfig | positionDelta = round delta }
+        UpdatePositionDelta new_value ->
+            let
+                value =
+                    round new_value
+            in
+            { imageConfig
+                | positionDelta = value
+                , positionDeltaSlider = SingleSlider.update new_value imageConfig.positionDeltaSlider
+            }
 
 
 
