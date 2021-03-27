@@ -5250,7 +5250,6 @@ var $author$project$Main$init = function (_v0) {
 			activeCircle: initialCircle,
 			displayText: '',
 			imageConfig: {height: 500, positionDelta: 5, width: 500},
-			output: '',
 			paused: false,
 			visibleCircles: A2(
 				$elm$core$Dict$singleton,
@@ -5264,8 +5263,10 @@ var $author$project$Main$GotSvg = function (a) {
 	return {$: 'GotSvg', a: a};
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Main$gotSvg = _Platform_incomingPort('gotSvg', $elm$json$Json$Decode$string);
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $author$project$Main$gotSvg = _Platform_incomingPort(
+	'gotSvg',
+	$elm$json$Json$Decode$null(_Utils_Tuple0));
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$AnimationManager$Time = function (a) {
 	return {$: 'Time', a: a};
@@ -5874,22 +5875,14 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 'GetSvg':
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{displayText: model.displayText + ' Download? '}),
+					model,
 					$author$project$Main$getSvg(_Utils_Tuple0));
 			default:
-				var output = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{displayText: model.displayText + ' TADA!!! ', output: output}),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$GetSvg = {$: 'GetSvg'};
 var $author$project$Main$TogglePaused = {$: 'TogglePaused'};
-var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$div = _VirtualDom_node('div');
@@ -5901,219 +5894,6 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			$elm$json$Json$Encode$string(string));
 	});
-var $elm$html$Html$Attributes$download = function (fileName) {
-	return A2($elm$html$Html$Attributes$stringProperty, 'download', fileName);
-};
-var $elm$core$Bitwise$or = _Bitwise_or;
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $truqu$elm_base64$Base64$Encode$intToBase64 = function (i) {
-	switch (i) {
-		case 0:
-			return 'A';
-		case 1:
-			return 'B';
-		case 2:
-			return 'C';
-		case 3:
-			return 'D';
-		case 4:
-			return 'E';
-		case 5:
-			return 'F';
-		case 6:
-			return 'G';
-		case 7:
-			return 'H';
-		case 8:
-			return 'I';
-		case 9:
-			return 'J';
-		case 10:
-			return 'K';
-		case 11:
-			return 'L';
-		case 12:
-			return 'M';
-		case 13:
-			return 'N';
-		case 14:
-			return 'O';
-		case 15:
-			return 'P';
-		case 16:
-			return 'Q';
-		case 17:
-			return 'R';
-		case 18:
-			return 'S';
-		case 19:
-			return 'T';
-		case 20:
-			return 'U';
-		case 21:
-			return 'V';
-		case 22:
-			return 'W';
-		case 23:
-			return 'X';
-		case 24:
-			return 'Y';
-		case 25:
-			return 'Z';
-		case 26:
-			return 'a';
-		case 27:
-			return 'b';
-		case 28:
-			return 'c';
-		case 29:
-			return 'd';
-		case 30:
-			return 'e';
-		case 31:
-			return 'f';
-		case 32:
-			return 'g';
-		case 33:
-			return 'h';
-		case 34:
-			return 'i';
-		case 35:
-			return 'j';
-		case 36:
-			return 'k';
-		case 37:
-			return 'l';
-		case 38:
-			return 'm';
-		case 39:
-			return 'n';
-		case 40:
-			return 'o';
-		case 41:
-			return 'p';
-		case 42:
-			return 'q';
-		case 43:
-			return 'r';
-		case 44:
-			return 's';
-		case 45:
-			return 't';
-		case 46:
-			return 'u';
-		case 47:
-			return 'v';
-		case 48:
-			return 'w';
-		case 49:
-			return 'x';
-		case 50:
-			return 'y';
-		case 51:
-			return 'z';
-		case 52:
-			return '0';
-		case 53:
-			return '1';
-		case 54:
-			return '2';
-		case 55:
-			return '3';
-		case 56:
-			return '4';
-		case 57:
-			return '5';
-		case 58:
-			return '6';
-		case 59:
-			return '7';
-		case 60:
-			return '8';
-		case 61:
-			return '9';
-		case 62:
-			return '+';
-		default:
-			return '/';
-	}
-};
-var $truqu$elm_base64$Base64$Encode$toBase64 = function (_int) {
-	return _Utils_ap(
-		$truqu$elm_base64$Base64$Encode$intToBase64(63 & (_int >>> 18)),
-		_Utils_ap(
-			$truqu$elm_base64$Base64$Encode$intToBase64(63 & (_int >>> 12)),
-			_Utils_ap(
-				$truqu$elm_base64$Base64$Encode$intToBase64(63 & (_int >>> 6)),
-				$truqu$elm_base64$Base64$Encode$intToBase64(63 & (_int >>> 0)))));
-};
-var $truqu$elm_base64$Base64$Encode$add = F2(
-	function (_char, _v0) {
-		var res = _v0.a;
-		var count = _v0.b;
-		var acc = _v0.c;
-		var current = (acc << 8) | _char;
-		if (count === 2) {
-			return _Utils_Tuple3(
-				_Utils_ap(
-					res,
-					$truqu$elm_base64$Base64$Encode$toBase64(current)),
-				0,
-				0);
-		} else {
-			return _Utils_Tuple3(res, count + 1, current);
-		}
-	});
-var $elm$core$Basics$ge = _Utils_ge;
-var $truqu$elm_base64$Base64$Encode$chomp = F2(
-	function (char_, acc) {
-		var _char = $elm$core$Char$toCode(char_);
-		return (_char < 128) ? A2($truqu$elm_base64$Base64$Encode$add, _char, acc) : ((_char < 2048) ? A2(
-			$truqu$elm_base64$Base64$Encode$add,
-			128 | (63 & _char),
-			A2($truqu$elm_base64$Base64$Encode$add, 192 | (_char >>> 6), acc)) : (((_char < 55296) || ((_char >= 57344) && (_char <= 65535))) ? A2(
-			$truqu$elm_base64$Base64$Encode$add,
-			128 | (63 & _char),
-			A2(
-				$truqu$elm_base64$Base64$Encode$add,
-				128 | (63 & (_char >>> 6)),
-				A2($truqu$elm_base64$Base64$Encode$add, 224 | (_char >>> 12), acc))) : A2(
-			$truqu$elm_base64$Base64$Encode$add,
-			128 | (63 & _char),
-			A2(
-				$truqu$elm_base64$Base64$Encode$add,
-				128 | (63 & (_char >>> 6)),
-				A2(
-					$truqu$elm_base64$Base64$Encode$add,
-					128 | (63 & (_char >>> 12)),
-					A2($truqu$elm_base64$Base64$Encode$add, 240 | (_char >>> 18), acc))))));
-	});
-var $elm$core$String$foldl = _String_foldl;
-var $truqu$elm_base64$Base64$Encode$initial = _Utils_Tuple3('', 0, 0);
-var $truqu$elm_base64$Base64$Encode$wrapUp = function (_v0) {
-	var res = _v0.a;
-	var cnt = _v0.b;
-	var acc = _v0.c;
-	switch (cnt) {
-		case 1:
-			return res + ($truqu$elm_base64$Base64$Encode$intToBase64(63 & (acc >>> 2)) + ($truqu$elm_base64$Base64$Encode$intToBase64(63 & (acc << 4)) + '=='));
-		case 2:
-			return res + ($truqu$elm_base64$Base64$Encode$intToBase64(63 & (acc >>> 10)) + ($truqu$elm_base64$Base64$Encode$intToBase64(63 & (acc >>> 4)) + ($truqu$elm_base64$Base64$Encode$intToBase64(63 & (acc << 2)) + '=')));
-		default:
-			return res;
-	}
-};
-var $truqu$elm_base64$Base64$Encode$encode = function (input) {
-	return $truqu$elm_base64$Base64$Encode$wrapUp(
-		A3($elm$core$String$foldl, $truqu$elm_base64$Base64$Encode$chomp, $truqu$elm_base64$Base64$Encode$initial, input));
-};
-var $truqu$elm_base64$Base64$encode = $truqu$elm_base64$Base64$Encode$encode;
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
@@ -6249,18 +6029,8 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $elm$html$Html$Attributes$rows = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'rows',
-		$elm$core$String$fromInt(n));
-};
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$html$Html$textarea = _VirtualDom_node('textarea');
-var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6305,27 +6075,6 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$author$project$Main$modelToSvg(model)
-					])),
-				A2(
-				$elm$html$Html$textarea,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$rows(10),
-						A2($elm$html$Html$Attributes$style, 'width', '100%'),
-						$elm$html$Html$Attributes$value(model.output)
-					]),
-				_List_Nil),
-				$elm$core$String$isEmpty(model.output) ? $elm$html$Html$text('') : A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$download('output.svg'),
-						$elm$html$Html$Attributes$href(
-						'data:image/svg+xml;base64,' + $truqu$elm_base64$Base64$encode(model.output))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Download Svg')
 					]))
 			]));
 };

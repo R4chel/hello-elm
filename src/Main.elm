@@ -16,7 +16,7 @@ import Dict exposing (Dict)
 import Direction exposing (Direction(..))
 import File.Download as Download
 import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (href)
+import Html.Attributes exposing (href, id)
 import Html.Events exposing (onClick)
 import ImageConfig exposing (ImageConfig)
 import Random
@@ -43,7 +43,7 @@ port getSvg : () -> Cmd msg
 
 {-| TODO change to be (() -> msg)
 -}
-port gotSvg : (String -> msg) -> Sub msg
+port gotSvg : (() -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
@@ -76,12 +76,11 @@ positionDelta =
 
 
 type alias Model =
-    { activeCircle : Circle
+    { imageConfig : ImageConfig
+    , activeCircle : Circle
     , displayText : String
     , visibleCircles : Dict ComparablePosition InternalColor
     , paused : Bool
-    , output : String
-    , imageConfig : ImageConfig
     }
 
 
@@ -96,7 +95,6 @@ init () =
       , displayText = ""
       , visibleCircles = Dict.singleton ( initialCircle.position.x, initialCircle.position.y ) initialCircle.color
       , paused = False
-      , output = ""
       }
     , Cmd.none
     )
@@ -114,7 +112,7 @@ type Msg
     | TogglePaused
     | PrintFoo
     | GetSvg
-    | GotSvg String
+    | GotSvg ()
 
 
 step : Model -> CircleUpdate -> Model
@@ -155,10 +153,10 @@ update msg model =
             )
 
         GetSvg ->
-            ( { model | displayText = model.displayText ++ " Download? " }, getSvg () )
+            ( model, getSvg () )
 
-        GotSvg output ->
-            ( { model | output = output, displayText = model.displayText ++ " TADA!!! " }, Cmd.none )
+        GotSvg () ->
+            ( model, Cmd.none )
 
 
 
@@ -177,38 +175,10 @@ view model =
                     "Pause"
                 )
             ]
-
-        -- , button [ onClick GetSvg ]
-        --     [ text "Download"
-        --     ]
         , Html.button [ onClick GetSvg ] [ Html.text "Download" ]
         , div [] [ text model.displayText ]
         , Html.br [] []
-        , div [ Html.Attributes.id "output" ] [ modelToSvg model ]
-        , Html.textarea
-            [ Html.Attributes.rows 10
-            , Html.Attributes.style "width" "100%"
-            , Html.Attributes.value model.output
-            ]
-            []
-        , if String.isEmpty model.output then
-            Html.text ""
-
-          else
-            Html.a
-                [ Html.Attributes.download "output.svg"
-                , Html.Attributes.href ("data:image/svg+xml;base64," ++ Base64.encode model.output)
-                ]
-                [ Html.text "Download Svg" ]
-
-        -- , if String.isEmpty model.output then
-        --     text "Nothing to download"
-        --   else
-        --     Html.a
-        --         [ Html.Attributes.download "output.svg"
-        --         , Html.Attributes.href ("data:image/svg+xml;base64," ++ Base64.encode model.output)
-        --         ]
-        --         [ Html.text "Download Svg" ]
+        , div [] [ modelToSvg model ]
         ]
 
 
@@ -223,7 +193,8 @@ pixels model =
 
 modelToSvg model =
     svg
-        [ width (String.fromInt model.imageConfig.width)
+        [ id "output"
+        , width (String.fromInt model.imageConfig.width)
         , height (String.fromInt model.imageConfig.height)
         , viewBox (String.join " " [ "0", "0", String.fromInt model.imageConfig.width, String.fromInt model.imageConfig.height ])
         ]
