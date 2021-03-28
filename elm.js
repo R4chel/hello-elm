@@ -5583,25 +5583,109 @@ var $author$project$Circle$CircleUpdate = F2(
 	function (direction, colorUpdate) {
 		return {colorUpdate: colorUpdate, direction: direction};
 	});
-var $author$project$Direction$East = {$: 'East'};
-var $author$project$Direction$North = {$: 'North'};
-var $author$project$Direction$South = {$: 'South'};
-var $author$project$Direction$West = {$: 'West'};
-var $elm$random$Random$addOne = function (value) {
-	return _Utils_Tuple2(1, value);
-};
+var $author$project$Direction$Direction = F2(
+	function (xDelta, yDelta) {
+		return {xDelta: xDelta, yDelta: yDelta};
+	});
+var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
-var $elm$core$Basics$abs = function (n) {
-	return (n < 0) ? (-n) : n;
-};
-var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $elm$random$Random$peel = function (_v0) {
 	var state = _v0.a;
 	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
 	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+				var lo = _v0.a;
+				var hi = _v0.b;
+				var range = (hi - lo) + 1;
+				if (!((range - 1) & range)) {
+					return _Utils_Tuple2(
+						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+						$elm$random$Random$next(seed0));
+				} else {
+					var threshhold = (((-range) >>> 0) % range) >>> 0;
+					var accountForBias = function (seed) {
+						accountForBias:
+						while (true) {
+							var x = $elm$random$Random$peel(seed);
+							var seedN = $elm$random$Random$next(seed);
+							if (_Utils_cmp(x, threshhold) < 0) {
+								var $temp$seed = seedN;
+								seed = $temp$seed;
+								continue accountForBias;
+							} else {
+								return _Utils_Tuple2((x % range) + lo, seedN);
+							}
+						}
+					};
+					return accountForBias(seed0);
+				}
+			});
+	});
+var $author$project$Direction$deltaGenerator = function (maxPositionDelta) {
+	return A2($elm$random$Random$int, (-1) * maxPositionDelta, maxPositionDelta);
+};
+var $elm$random$Random$map2 = F3(
+	function (func, _v0, _v1) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v2 = genA(seed0);
+				var a = _v2.a;
+				var seed1 = _v2.b;
+				var _v3 = genB(seed1);
+				var b = _v3.a;
+				var seed2 = _v3.b;
+				return _Utils_Tuple2(
+					A2(func, a, b),
+					seed2);
+			});
+	});
+var $author$project$Direction$generator = function (maxPositionDelta) {
+	return A3(
+		$elm$random$Random$map2,
+		$author$project$Direction$Direction,
+		$author$project$Direction$deltaGenerator(maxPositionDelta),
+		$author$project$Direction$deltaGenerator(maxPositionDelta));
+};
+var $author$project$Circle$ColorUpdate = F3(
+	function (rDelta, gDelta, bDelta) {
+		return {bDelta: bDelta, gDelta: gDelta, rDelta: rDelta};
+	});
+var $elm$random$Random$map3 = F4(
+	function (func, _v0, _v1, _v2) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		var genC = _v2.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v3 = genA(seed0);
+				var a = _v3.a;
+				var seed1 = _v3.b;
+				var _v4 = genB(seed1);
+				var b = _v4.a;
+				var seed2 = _v4.b;
+				var _v5 = genC(seed2);
+				var c = _v5.a;
+				var seed3 = _v5.b;
+				return _Utils_Tuple2(
+					A3(func, a, b, c),
+					seed3);
+			});
+	});
+var $elm$random$Random$addOne = function (value) {
+	return _Utils_Tuple2(1, value);
+};
+var $elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
 };
 var $elm$random$Random$float = F2(
 	function (a, b) {
@@ -5670,53 +5754,6 @@ var $elm$random$Random$uniform = F2(
 			$elm$random$Random$addOne(value),
 			A2($elm$core$List$map, $elm$random$Random$addOne, valueList));
 	});
-var $author$project$Direction$generator = A2(
-	$elm$random$Random$uniform,
-	$author$project$Direction$North,
-	_List_fromArray(
-		[$author$project$Direction$South, $author$project$Direction$East, $author$project$Direction$West]));
-var $elm$random$Random$map2 = F3(
-	function (func, _v0, _v1) {
-		var genA = _v0.a;
-		var genB = _v1.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v2 = genA(seed0);
-				var a = _v2.a;
-				var seed1 = _v2.b;
-				var _v3 = genB(seed1);
-				var b = _v3.a;
-				var seed2 = _v3.b;
-				return _Utils_Tuple2(
-					A2(func, a, b),
-					seed2);
-			});
-	});
-var $author$project$Circle$ColorUpdate = F3(
-	function (rDelta, gDelta, bDelta) {
-		return {bDelta: bDelta, gDelta: gDelta, rDelta: rDelta};
-	});
-var $elm$random$Random$map3 = F4(
-	function (func, _v0, _v1, _v2) {
-		var genA = _v0.a;
-		var genB = _v1.a;
-		var genC = _v2.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v3 = genA(seed0);
-				var a = _v3.a;
-				var seed1 = _v3.b;
-				var _v4 = genB(seed1);
-				var b = _v4.a;
-				var seed2 = _v4.b;
-				var _v5 = genC(seed2);
-				var c = _v5.a;
-				var seed3 = _v5.b;
-				return _Utils_Tuple2(
-					A3(func, a, b, c),
-					seed3);
-			});
-	});
 var $author$project$Circle$randomColorUpdate = A4(
 	$elm$random$Random$map3,
 	$author$project$Circle$ColorUpdate,
@@ -5735,7 +5772,13 @@ var $author$project$Circle$randomColorUpdate = A4(
 		-5,
 		_List_fromArray(
 			[5])));
-var $author$project$Circle$randomCircleUpdate = A3($elm$random$Random$map2, $author$project$Circle$CircleUpdate, $author$project$Direction$generator, $author$project$Circle$randomColorUpdate);
+var $author$project$Circle$randomCircleUpdate = function (imageConfig) {
+	return A3(
+		$elm$random$Random$map2,
+		$author$project$Circle$CircleUpdate,
+		$author$project$Direction$generator(imageConfig.positionDelta),
+		$author$project$Circle$randomColorUpdate);
+};
 var $elm$core$Elm$JsArray$push = _JsArray_push;
 var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
 var $elm$core$Basics$ge = _Utils_ge;
@@ -6071,32 +6114,10 @@ var $author$project$Circle$updateColor = F2(
 	});
 var $author$project$Circle$updatePosition = F3(
 	function (imageConfig, direction, position) {
-		switch (direction.$) {
-			case 'North':
-				return _Utils_update(
-					position,
-					{
-						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y + imageConfig.positionDelta)
-					});
-			case 'South':
-				return _Utils_update(
-					position,
-					{
-						y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y - imageConfig.positionDelta)
-					});
-			case 'East':
-				return _Utils_update(
-					position,
-					{
-						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x + imageConfig.positionDelta)
-					});
-			default:
-				return _Utils_update(
-					position,
-					{
-						x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x - imageConfig.positionDelta)
-					});
-		}
+		return {
+			x: A3($elm$core$Basics$clamp, 0, imageConfig.width, position.x + direction.xDelta),
+			y: A3($elm$core$Basics$clamp, 0, imageConfig.height, position.y + direction.yDelta)
+		};
 	});
 var $author$project$Circle$updateCircle = F3(
 	function (imageConfig, circleUpdate, circle) {
@@ -6165,7 +6186,10 @@ var $author$project$Main$update = F2(
 			case 'ChooseDirection':
 				return _Utils_Tuple2(
 					model,
-					A2($elm$random$Random$generate, $author$project$Main$Step, $author$project$Circle$randomCircleUpdate));
+					A2(
+						$elm$random$Random$generate,
+						$author$project$Main$Step,
+						$author$project$Circle$randomCircleUpdate(model.imageConfig)));
 			case 'PrintFoo':
 				return _Utils_Tuple2(
 					_Utils_update(

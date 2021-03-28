@@ -15,7 +15,7 @@ import Browser.Events exposing (onAnimationFrame)
 import Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor)
 import Color exposing (Color)
 import Dict exposing (Dict)
-import Direction exposing (Direction(..))
+import Direction exposing (Direction)
 import File.Download as Download
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (href, id)
@@ -130,7 +130,7 @@ update msg model =
             )
 
         ChooseDirection ->
-            ( model, Random.generate Step Circle.randomCircleUpdate )
+            ( model, Random.generate Step (Circle.randomCircleUpdate model.imageConfig) )
 
         PrintFoo ->
             ( { model | displayText = model.displayText ++ " HI! " }, Cmd.none )

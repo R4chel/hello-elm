@@ -1,15 +1,20 @@
-module Direction exposing (Direction(..), generator)
+module Direction exposing (Direction, generator)
 
 import Random
 
 
-type Direction
-    = North
-    | South
-    | East
-    | West
+type alias Direction =
+    { xDelta : Int, yDelta : Int }
 
 
-generator : Random.Generator Direction
-generator =
-    Random.uniform North [ South, East, West ]
+deltaGenerator : Int -> Random.Generator Int
+deltaGenerator maxPositionDelta =
+    Random.int (-1 * maxPositionDelta) maxPositionDelta
+
+
+generator : Int -> Random.Generator Direction
+generator maxPositionDelta =
+    Random.map2
+        Direction
+        (deltaGenerator maxPositionDelta)
+        (deltaGenerator maxPositionDelta)

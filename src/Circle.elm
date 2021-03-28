@@ -1,7 +1,7 @@
 module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, fillColor, newCircle, randomCircleUpdate, updateCircle)
 
 import Color exposing (Color)
-import Direction exposing (Direction(..))
+import Direction exposing (Direction)
 import ImageConfig exposing (ImageConfig)
 import Random
 
@@ -32,11 +32,11 @@ randomColorUpdate =
         )
 
 
-randomCircleUpdate : Random.Generator CircleUpdate
-randomCircleUpdate =
+randomCircleUpdate : ImageConfig -> Random.Generator CircleUpdate
+randomCircleUpdate imageConfig =
     Random.map2
         CircleUpdate
-        Direction.generator
+        (Direction.generator imageConfig.positionDelta)
         randomColorUpdate
 
 
@@ -86,18 +86,9 @@ newCircle =
 
 updatePosition : ImageConfig -> Direction -> Position -> Position
 updatePosition imageConfig direction position =
-    case direction of
-        North ->
-            { position | y = clamp 0 imageConfig.height (position.y + imageConfig.positionDelta) }
-
-        South ->
-            { position | y = clamp 0 imageConfig.height (position.y - imageConfig.positionDelta) }
-
-        East ->
-            { position | x = clamp 0 imageConfig.width (position.x + imageConfig.positionDelta) }
-
-        West ->
-            { position | x = clamp 0 imageConfig.width (position.x - imageConfig.positionDelta) }
+    { x = clamp 0 imageConfig.width (position.x + direction.xDelta)
+    , y = clamp 0 imageConfig.height (position.y + direction.yDelta)
+    }
 
 
 updateColor : InternalColor -> ColorUpdate -> InternalColor
