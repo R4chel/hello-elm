@@ -1,4 +1,4 @@
-module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, fillColor, newCircle, randomCircleUpdate, updateCircle)
+module Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor, fillColor, generate, newCircle, randomCircleUpdate, updateCircle)
 
 import Color exposing (Color)
 import Direction exposing (Direction)
@@ -46,6 +46,14 @@ type alias Position =
     }
 
 
+generatePosition : ImageConfig -> Random.Generator Position
+generatePosition imageConfig =
+    Random.map2
+        Position
+        (Random.int 0 imageConfig.width)
+        (Random.int 0 imageConfig.height)
+
+
 type alias ComparablePosition =
     ( Int, Int )
 
@@ -66,6 +74,15 @@ internalColorToCssColor : InternalColor -> String
 internalColorToCssColor color =
     internalColorToColor color
         |> Color.toCssString
+
+
+internalColorGenerate : Random.Generator InternalColor
+internalColorGenerate =
+    Random.map3
+        InternalColor
+        (Random.int 0 255)
+        (Random.int 0 255)
+        (Random.int 0 255)
 
 
 type alias Circle =
@@ -110,3 +127,12 @@ updateCircle imageConfig circleUpdate circle =
 fillColor : Circle -> String
 fillColor circle =
     internalColorToCssColor circle.color
+
+
+generate : ImageConfig -> Random.Generator Circle
+generate imageConfig =
+    Random.map3
+        Circle
+        (generatePosition imageConfig)
+        internalColorGenerate
+        (Random.int 5 5)

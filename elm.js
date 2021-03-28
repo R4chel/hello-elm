@@ -5227,41 +5227,229 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$element = _Browser_element;
-var $elm$core$Array$fromListHelp = F3(
-	function (list, nodeList, nodeListSize) {
-		fromListHelp:
-		while (true) {
-			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
-			var jsArray = _v0.a;
-			var remainingItems = _v0.b;
-			if (_Utils_cmp(
-				$elm$core$Elm$JsArray$length(jsArray),
-				$elm$core$Array$branchFactor) < 0) {
-				return A2(
-					$elm$core$Array$builderToArray,
-					true,
-					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
-			} else {
-				var $temp$list = remainingItems,
-					$temp$nodeList = A2(
-					$elm$core$List$cons,
-					$elm$core$Array$Leaf(jsArray),
-					nodeList),
-					$temp$nodeListSize = nodeListSize + 1;
-				list = $temp$list;
-				nodeList = $temp$nodeList;
-				nodeListSize = $temp$nodeListSize;
-				continue fromListHelp;
-			}
+var $author$project$Main$AddCircle = function (a) {
+	return {$: 'AddCircle', a: a};
+};
+var $author$project$Circle$Circle = F3(
+	function (position, color, radius) {
+		return {color: color, position: position, radius: radius};
+	});
+var $author$project$Circle$Position = F2(
+	function (x, y) {
+		return {x: x, y: y};
+	});
+var $elm$random$Random$Generator = function (a) {
+	return {$: 'Generator', a: a};
+};
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 'Seed', a: a, b: b};
+	});
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $elm$random$Random$peel = function (_v0) {
+	var state = _v0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+				var lo = _v0.a;
+				var hi = _v0.b;
+				var range = (hi - lo) + 1;
+				if (!((range - 1) & range)) {
+					return _Utils_Tuple2(
+						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+						$elm$random$Random$next(seed0));
+				} else {
+					var threshhold = (((-range) >>> 0) % range) >>> 0;
+					var accountForBias = function (seed) {
+						accountForBias:
+						while (true) {
+							var x = $elm$random$Random$peel(seed);
+							var seedN = $elm$random$Random$next(seed);
+							if (_Utils_cmp(x, threshhold) < 0) {
+								var $temp$seed = seedN;
+								seed = $temp$seed;
+								continue accountForBias;
+							} else {
+								return _Utils_Tuple2((x % range) + lo, seedN);
+							}
+						}
+					};
+					return accountForBias(seed0);
+				}
+			});
+	});
+var $elm$random$Random$map2 = F3(
+	function (func, _v0, _v1) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v2 = genA(seed0);
+				var a = _v2.a;
+				var seed1 = _v2.b;
+				var _v3 = genB(seed1);
+				var b = _v3.a;
+				var seed2 = _v3.b;
+				return _Utils_Tuple2(
+					A2(func, a, b),
+					seed2);
+			});
+	});
+var $author$project$Circle$generatePosition = function (imageConfig) {
+	return A3(
+		$elm$random$Random$map2,
+		$author$project$Circle$Position,
+		A2($elm$random$Random$int, 0, imageConfig.width),
+		A2($elm$random$Random$int, 0, imageConfig.height));
+};
+var $author$project$Circle$InternalColor = F3(
+	function (red, green, blue) {
+		return {blue: blue, green: green, red: red};
+	});
+var $elm$random$Random$map3 = F4(
+	function (func, _v0, _v1, _v2) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		var genC = _v2.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v3 = genA(seed0);
+				var a = _v3.a;
+				var seed1 = _v3.b;
+				var _v4 = genB(seed1);
+				var b = _v4.a;
+				var seed2 = _v4.b;
+				var _v5 = genC(seed2);
+				var c = _v5.a;
+				var seed3 = _v5.b;
+				return _Utils_Tuple2(
+					A3(func, a, b, c),
+					seed3);
+			});
+	});
+var $author$project$Circle$internalColorGenerate = A4(
+	$elm$random$Random$map3,
+	$author$project$Circle$InternalColor,
+	A2($elm$random$Random$int, 0, 255),
+	A2($elm$random$Random$int, 0, 255),
+	A2($elm$random$Random$int, 0, 255));
+var $author$project$Circle$generate = function (imageConfig) {
+	return A4(
+		$elm$random$Random$map3,
+		$author$project$Circle$Circle,
+		$author$project$Circle$generatePosition(imageConfig),
+		$author$project$Circle$internalColorGenerate,
+		A2($elm$random$Random$int, 5, 5));
+};
+var $elm$random$Random$Generate = function (a) {
+	return {$: 'Generate', a: a};
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var $elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
+var $elm$time$Time$posixToMillis = function (_v0) {
+	var millis = _v0.a;
+	return millis;
+};
+var $elm$random$Random$init = A2(
+	$elm$core$Task$andThen,
+	function (time) {
+		return $elm$core$Task$succeed(
+			$elm$random$Random$initialSeed(
+				$elm$time$Time$posixToMillis(time)));
+	},
+	$elm$time$Time$now);
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0.a;
+		return generator(seed);
+	});
+var $elm$random$Random$onEffects = F3(
+	function (router, commands, seed) {
+		if (!commands.b) {
+			return $elm$core$Task$succeed(seed);
+		} else {
+			var generator = commands.a.a;
+			var rest = commands.b;
+			var _v1 = A2($elm$random$Random$step, generator, seed);
+			var value = _v1.a;
+			var newSeed = _v1.b;
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$random$Random$onEffects, router, rest, newSeed);
+				},
+				A2($elm$core$Platform$sendToApp, router, value));
 		}
 	});
-var $elm$core$Array$fromList = function (list) {
-	if (!list.b) {
-		return $elm$core$Array$empty;
-	} else {
-		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
-	}
-};
+var $elm$random$Random$onSelfMsg = F3(
+	function (_v0, _v1, seed) {
+		return $elm$core$Task$succeed(seed);
+	});
+var $elm$random$Random$map = F2(
+	function (func, _v0) {
+		var genA = _v0.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v1 = genA(seed0);
+				var a = _v1.a;
+				var seed1 = _v1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
+	});
+var $elm$random$Random$cmdMap = F2(
+	function (func, _v0) {
+		var generator = _v0.a;
+		return $elm$random$Random$Generate(
+			A2($elm$random$Random$map, func, generator));
+	});
+_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
+var $elm$random$Random$command = _Platform_leaf('Random');
+var $elm$random$Random$generate = F2(
+	function (tagger, generator) {
+		return $elm$random$Random$command(
+			$elm$random$Random$Generate(
+				A2($elm$random$Random$map, tagger, generator)));
+	});
 var $author$project$ImageConfig$UpdateMaxCircles = function (a) {
 	return {$: 'UpdateMaxCircles', a: a};
 };
@@ -5298,29 +5486,24 @@ var $author$project$ImageConfig$init = function (_v0) {
 		width: 500
 	};
 };
-var $author$project$Circle$newCircle = {
-	color: {blue: 100, green: 0, red: 100},
-	position: {x: 10, y: 10},
-	radius: 5
-};
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
-	var initialCircle = $author$project$Circle$newCircle;
+	var imageConfig = $author$project$ImageConfig$init(_Utils_Tuple0);
 	return _Utils_Tuple2(
-		{
-			activeCircle: initialCircle,
-			displayText: '',
-			imageConfig: $author$project$ImageConfig$init(_Utils_Tuple0),
-			paused: false,
-			visibleCircles: $elm$core$Array$fromList(
-				_List_fromArray(
-					[initialCircle]))
-		},
-		$elm$core$Platform$Cmd$none);
+		{activeCircles: _List_Nil, displayText: '', imageConfig: imageConfig, paused: false, visibleCircles: $elm$core$Array$empty},
+		A2(
+			$elm$random$Random$generate,
+			$author$project$Main$AddCircle,
+			$author$project$Circle$generate(imageConfig)));
 };
 var $author$project$Main$ChooseDirection = {$: 'ChooseDirection'};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
+};
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$AnimationManager$Time = function (a) {
 	return {$: 'Time', a: a};
@@ -5383,10 +5566,6 @@ var $elm$browser$Browser$AnimationManager$onEffects = F3(
 			}
 		}
 	});
-var $elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
 var $elm$browser$Browser$AnimationManager$onSelfMsg = F3(
 	function (router, newTime, _v0) {
 		var subs = _v0.subs;
@@ -5460,7 +5639,7 @@ var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				model.paused ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrame(
+				(model.paused || $elm$core$List$isEmpty(model.activeCircles)) ? $elm$core$Platform$Sub$none : $elm$browser$Browser$Events$onAnimationFrame(
 				function (_v0) {
 					return $author$project$Main$ChooseDirection;
 				})
@@ -5469,116 +5648,98 @@ var $author$project$Main$subscriptions = function (model) {
 var $author$project$Main$Step = function (a) {
 	return {$: 'Step', a: a};
 };
-var $elm$random$Random$Generate = function (a) {
-	return {$: 'Generate', a: a};
-};
-var $elm$random$Random$Seed = F2(
-	function (a, b) {
-		return {$: 'Seed', a: a, b: b};
-	});
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $elm$random$Random$next = function (_v0) {
-	var state0 = _v0.a;
-	var incr = _v0.b;
-	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
-};
-var $elm$random$Random$initialSeed = function (x) {
-	var _v0 = $elm$random$Random$next(
-		A2($elm$random$Random$Seed, 0, 1013904223));
-	var state1 = _v0.a;
-	var incr = _v0.b;
-	var state2 = (state1 + x) >>> 0;
-	return $elm$random$Random$next(
-		A2($elm$random$Random$Seed, state2, incr));
-};
-var $elm$time$Time$Name = function (a) {
-	return {$: 'Name', a: a};
-};
-var $elm$time$Time$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$customZone = $elm$time$Time$Zone;
-var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
-var $elm$time$Time$posixToMillis = function (_v0) {
-	var millis = _v0.a;
-	return millis;
-};
-var $elm$random$Random$init = A2(
-	$elm$core$Task$andThen,
-	function (time) {
-		return $elm$core$Task$succeed(
-			$elm$random$Random$initialSeed(
-				$elm$time$Time$posixToMillis(time)));
-	},
-	$elm$time$Time$now);
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0.a;
-		return generator(seed);
-	});
-var $elm$random$Random$onEffects = F3(
-	function (router, commands, seed) {
-		if (!commands.b) {
-			return $elm$core$Task$succeed(seed);
-		} else {
-			var generator = commands.a.a;
-			var rest = commands.b;
-			var _v1 = A2($elm$random$Random$step, generator, seed);
-			var value = _v1.a;
-			var newSeed = _v1.b;
-			return A2(
-				$elm$core$Task$andThen,
-				function (_v2) {
-					return A3($elm$random$Random$onEffects, router, rest, newSeed);
-				},
-				A2($elm$core$Platform$sendToApp, router, value));
-		}
-	});
-var $elm$random$Random$onSelfMsg = F3(
-	function (_v0, _v1, seed) {
-		return $elm$core$Task$succeed(seed);
-	});
-var $elm$random$Random$Generator = function (a) {
-	return {$: 'Generator', a: a};
-};
-var $elm$random$Random$map = F2(
-	function (func, _v0) {
-		var genA = _v0.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v1 = genA(seed0);
-				var a = _v1.a;
-				var seed1 = _v1.b;
-				return _Utils_Tuple2(
-					func(a),
-					seed1);
-			});
-	});
-var $elm$random$Random$cmdMap = F2(
-	function (func, _v0) {
-		var generator = _v0.a;
-		return $elm$random$Random$Generate(
-			A2($elm$random$Random$map, func, generator));
-	});
-_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
-var $elm$random$Random$command = _Platform_leaf('Random');
-var $elm$random$Random$generate = F2(
-	function (tagger, generator) {
-		return $elm$random$Random$command(
-			$elm$random$Random$Generate(
-				A2($elm$random$Random$map, tagger, generator)));
-	});
 var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $author$project$Main$getSvg = _Platform_outgoingPort(
 	'getSvg',
 	function ($) {
 		return $elm$json$Json$Encode$null;
 	});
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$Basics$not = _Basics_not;
+var $elm$core$Elm$JsArray$push = _JsArray_push;
+var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
+var $elm$core$Basics$ge = _Utils_ge;
+var $elm$core$Elm$JsArray$singleton = _JsArray_singleton;
+var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
+var $elm$core$Elm$JsArray$unsafeSet = _JsArray_unsafeSet;
+var $elm$core$Array$insertTailInTree = F4(
+	function (shift, index, tail, tree) {
+		var pos = $elm$core$Array$bitMask & (index >>> shift);
+		if (_Utils_cmp(
+			pos,
+			$elm$core$Elm$JsArray$length(tree)) > -1) {
+			if (shift === 5) {
+				return A2(
+					$elm$core$Elm$JsArray$push,
+					$elm$core$Array$Leaf(tail),
+					tree);
+			} else {
+				var newSub = $elm$core$Array$SubTree(
+					A4($elm$core$Array$insertTailInTree, shift - $elm$core$Array$shiftStep, index, tail, $elm$core$Elm$JsArray$empty));
+				return A2($elm$core$Elm$JsArray$push, newSub, tree);
+			}
+		} else {
+			var value = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (value.$ === 'SubTree') {
+				var subTree = value.a;
+				var newSub = $elm$core$Array$SubTree(
+					A4($elm$core$Array$insertTailInTree, shift - $elm$core$Array$shiftStep, index, tail, subTree));
+				return A3($elm$core$Elm$JsArray$unsafeSet, pos, newSub, tree);
+			} else {
+				var newSub = $elm$core$Array$SubTree(
+					A4(
+						$elm$core$Array$insertTailInTree,
+						shift - $elm$core$Array$shiftStep,
+						index,
+						tail,
+						$elm$core$Elm$JsArray$singleton(value)));
+				return A3($elm$core$Elm$JsArray$unsafeSet, pos, newSub, tree);
+			}
+		}
+	});
+var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var $elm$core$Array$unsafeReplaceTail = F2(
+	function (newTail, _v0) {
+		var len = _v0.a;
+		var startShift = _v0.b;
+		var tree = _v0.c;
+		var tail = _v0.d;
+		var originalTailLen = $elm$core$Elm$JsArray$length(tail);
+		var newTailLen = $elm$core$Elm$JsArray$length(newTail);
+		var newArrayLen = len + (newTailLen - originalTailLen);
+		if (_Utils_eq(newTailLen, $elm$core$Array$branchFactor)) {
+			var overflow = _Utils_cmp(newArrayLen >>> $elm$core$Array$shiftStep, 1 << startShift) > 0;
+			if (overflow) {
+				var newShift = startShift + $elm$core$Array$shiftStep;
+				var newTree = A4(
+					$elm$core$Array$insertTailInTree,
+					newShift,
+					len,
+					newTail,
+					$elm$core$Elm$JsArray$singleton(
+						$elm$core$Array$SubTree(tree)));
+				return A4($elm$core$Array$Array_elm_builtin, newArrayLen, newShift, newTree, $elm$core$Elm$JsArray$empty);
+			} else {
+				return A4(
+					$elm$core$Array$Array_elm_builtin,
+					newArrayLen,
+					startShift,
+					A4($elm$core$Array$insertTailInTree, startShift, len, newTail, tree),
+					$elm$core$Elm$JsArray$empty);
+			}
+		} else {
+			return A4($elm$core$Array$Array_elm_builtin, newArrayLen, startShift, tree, newTail);
+		}
+	});
+var $elm$core$Array$push = F2(
+	function (a, array) {
+		var tail = array.d;
+		return A2(
+			$elm$core$Array$unsafeReplaceTail,
+			A2($elm$core$Elm$JsArray$push, a, tail),
+			array);
+	});
 var $author$project$Circle$CircleUpdate = F2(
 	function (direction, colorUpdate) {
 		return {colorUpdate: colorUpdate, direction: direction};
@@ -5587,68 +5748,9 @@ var $author$project$Direction$Direction = F2(
 	function (xDelta, yDelta) {
 		return {xDelta: xDelta, yDelta: yDelta};
 	});
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var $elm$core$Bitwise$xor = _Bitwise_xor;
-var $elm$random$Random$peel = function (_v0) {
-	var state = _v0.a;
-	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
-	return ((word >>> 22) ^ word) >>> 0;
-};
-var $elm$random$Random$int = F2(
-	function (a, b) {
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
-				var lo = _v0.a;
-				var hi = _v0.b;
-				var range = (hi - lo) + 1;
-				if (!((range - 1) & range)) {
-					return _Utils_Tuple2(
-						(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
-						$elm$random$Random$next(seed0));
-				} else {
-					var threshhold = (((-range) >>> 0) % range) >>> 0;
-					var accountForBias = function (seed) {
-						accountForBias:
-						while (true) {
-							var x = $elm$random$Random$peel(seed);
-							var seedN = $elm$random$Random$next(seed);
-							if (_Utils_cmp(x, threshhold) < 0) {
-								var $temp$seed = seedN;
-								seed = $temp$seed;
-								continue accountForBias;
-							} else {
-								return _Utils_Tuple2((x % range) + lo, seedN);
-							}
-						}
-					};
-					return accountForBias(seed0);
-				}
-			});
-	});
 var $author$project$Direction$deltaGenerator = function (maxPositionDelta) {
 	return A2($elm$random$Random$int, (-1) * maxPositionDelta, maxPositionDelta);
 };
-var $elm$random$Random$map2 = F3(
-	function (func, _v0, _v1) {
-		var genA = _v0.a;
-		var genB = _v1.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v2 = genA(seed0);
-				var a = _v2.a;
-				var seed1 = _v2.b;
-				var _v3 = genB(seed1);
-				var b = _v3.a;
-				var seed2 = _v3.b;
-				return _Utils_Tuple2(
-					A2(func, a, b),
-					seed2);
-			});
-	});
 var $author$project$Direction$generator = function (maxPositionDelta) {
 	return A3(
 		$elm$random$Random$map2,
@@ -5659,27 +5761,6 @@ var $author$project$Direction$generator = function (maxPositionDelta) {
 var $author$project$Circle$ColorUpdate = F3(
 	function (rDelta, gDelta, bDelta) {
 		return {bDelta: bDelta, gDelta: gDelta, rDelta: rDelta};
-	});
-var $elm$random$Random$map3 = F4(
-	function (func, _v0, _v1, _v2) {
-		var genA = _v0.a;
-		var genB = _v1.a;
-		var genC = _v2.a;
-		return $elm$random$Random$Generator(
-			function (seed0) {
-				var _v3 = genA(seed0);
-				var a = _v3.a;
-				var seed1 = _v3.b;
-				var _v4 = genB(seed1);
-				var b = _v4.a;
-				var seed2 = _v4.b;
-				var _v5 = genC(seed2);
-				var c = _v5.a;
-				var seed3 = _v5.b;
-				return _Utils_Tuple2(
-					A3(func, a, b, c),
-					seed3);
-			});
 	});
 var $elm$random$Random$addOne = function (value) {
 	return _Utils_Tuple2(1, value);
@@ -5779,89 +5860,6 @@ var $author$project$Circle$randomCircleUpdate = function (imageConfig) {
 		$author$project$Direction$generator(imageConfig.positionDelta),
 		$author$project$Circle$randomColorUpdate);
 };
-var $elm$core$Elm$JsArray$push = _JsArray_push;
-var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
-var $elm$core$Basics$ge = _Utils_ge;
-var $elm$core$Elm$JsArray$singleton = _JsArray_singleton;
-var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
-var $elm$core$Elm$JsArray$unsafeSet = _JsArray_unsafeSet;
-var $elm$core$Array$insertTailInTree = F4(
-	function (shift, index, tail, tree) {
-		var pos = $elm$core$Array$bitMask & (index >>> shift);
-		if (_Utils_cmp(
-			pos,
-			$elm$core$Elm$JsArray$length(tree)) > -1) {
-			if (shift === 5) {
-				return A2(
-					$elm$core$Elm$JsArray$push,
-					$elm$core$Array$Leaf(tail),
-					tree);
-			} else {
-				var newSub = $elm$core$Array$SubTree(
-					A4($elm$core$Array$insertTailInTree, shift - $elm$core$Array$shiftStep, index, tail, $elm$core$Elm$JsArray$empty));
-				return A2($elm$core$Elm$JsArray$push, newSub, tree);
-			}
-		} else {
-			var value = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
-			if (value.$ === 'SubTree') {
-				var subTree = value.a;
-				var newSub = $elm$core$Array$SubTree(
-					A4($elm$core$Array$insertTailInTree, shift - $elm$core$Array$shiftStep, index, tail, subTree));
-				return A3($elm$core$Elm$JsArray$unsafeSet, pos, newSub, tree);
-			} else {
-				var newSub = $elm$core$Array$SubTree(
-					A4(
-						$elm$core$Array$insertTailInTree,
-						shift - $elm$core$Array$shiftStep,
-						index,
-						tail,
-						$elm$core$Elm$JsArray$singleton(value)));
-				return A3($elm$core$Elm$JsArray$unsafeSet, pos, newSub, tree);
-			}
-		}
-	});
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $elm$core$Array$unsafeReplaceTail = F2(
-	function (newTail, _v0) {
-		var len = _v0.a;
-		var startShift = _v0.b;
-		var tree = _v0.c;
-		var tail = _v0.d;
-		var originalTailLen = $elm$core$Elm$JsArray$length(tail);
-		var newTailLen = $elm$core$Elm$JsArray$length(newTail);
-		var newArrayLen = len + (newTailLen - originalTailLen);
-		if (_Utils_eq(newTailLen, $elm$core$Array$branchFactor)) {
-			var overflow = _Utils_cmp(newArrayLen >>> $elm$core$Array$shiftStep, 1 << startShift) > 0;
-			if (overflow) {
-				var newShift = startShift + $elm$core$Array$shiftStep;
-				var newTree = A4(
-					$elm$core$Array$insertTailInTree,
-					newShift,
-					len,
-					newTail,
-					$elm$core$Elm$JsArray$singleton(
-						$elm$core$Array$SubTree(tree)));
-				return A4($elm$core$Array$Array_elm_builtin, newArrayLen, newShift, newTree, $elm$core$Elm$JsArray$empty);
-			} else {
-				return A4(
-					$elm$core$Array$Array_elm_builtin,
-					newArrayLen,
-					startShift,
-					A4($elm$core$Array$insertTailInTree, startShift, len, newTail, tree),
-					$elm$core$Elm$JsArray$empty);
-			}
-		} else {
-			return A4($elm$core$Array$Array_elm_builtin, newArrayLen, startShift, tree, newTail);
-		}
-	});
-var $elm$core$Array$push = F2(
-	function (a, array) {
-		var tail = array.d;
-		return A2(
-			$elm$core$Array$unsafeReplaceTail,
-			A2($elm$core$Elm$JsArray$push, a, tail),
-			array);
-	});
 var $elm$core$Array$length = function (_v0) {
 	var len = _v0.a;
 	return len;
@@ -6129,16 +6127,26 @@ var $author$project$Circle$updateCircle = F3(
 	});
 var $author$project$Main$step = F2(
 	function (model, circleUpdate) {
-		var updatedCircle = A3($author$project$Circle$updateCircle, model.imageConfig, circleUpdate, model.activeCircle);
-		return _Utils_update(
-			model,
-			{
-				activeCircle: updatedCircle,
-				visibleCircles: A2(
-					$elm_community$array_extra$Array$Extra$sliceFrom,
-					(-1) * model.imageConfig.maxCircles,
-					A2($elm$core$Array$push, updatedCircle, model.visibleCircles))
-			});
+		var _v0 = model.activeCircles;
+		if (!_v0.b) {
+			return model;
+		} else {
+			var hd = _v0.a;
+			var tl = _v0.b;
+			var updatedCircle = A3($author$project$Circle$updateCircle, model.imageConfig, circleUpdate, hd);
+			return _Utils_update(
+				model,
+				{
+					activeCircles: _Utils_ap(
+						tl,
+						_List_fromArray(
+							[updatedCircle])),
+					visibleCircles: A2(
+						$elm_community$array_extra$Array$Extra$sliceFrom,
+						(-1) * model.imageConfig.maxCircles,
+						A2($elm$core$Array$push, updatedCircle, model.visibleCircles))
+				});
+		}
 	});
 var $elm$core$Basics$round = _Basics_round;
 var $carwow$elm_slider$SingleSlider$update = F2(
@@ -6206,13 +6214,26 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					model,
 					$author$project$Main$getSvg(_Utils_Tuple0));
-			default:
+			case 'UpdateImageConfig':
 				var imageConfigUpdate = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
 							imageConfig: A2($author$project$ImageConfig$update, imageConfigUpdate, model.imageConfig)
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var circle = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							activeCircles: _Utils_ap(
+								model.activeCircles,
+								_List_fromArray(
+									[circle])),
+							visibleCircles: A2($elm$core$Array$push, circle, model.visibleCircles)
 						}),
 					$elm$core$Platform$Cmd$none);
 		}

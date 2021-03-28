@@ -44,7 +44,7 @@ port getSvg : () -> Cmd msg
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ if model.paused then
+        [ if model.paused || List.isEmpty model.activeCircles then
             Sub.none
 
           else
@@ -58,7 +58,7 @@ subscriptions model =
 
 type alias Model =
     { imageConfig : ImageConfig
-    , activeCircle : Circle
+    , activeCircles : List Circle
     , displayText : String
     , visibleCircles : Array Circle
     , paused : Bool
@@ -68,16 +68,16 @@ type alias Model =
 init : () -> ( Model, Cmd Msg )
 init () =
     let
-        initialCircle =
-            Circle.newCircle
+        imageConfig =
+            ImageConfig.init ()
     in
-    ( { imageConfig = ImageConfig.init ()
-      , activeCircle = initialCircle
+    ( { imageConfig = imageConfig
+      , activeCircles = []
       , displayText = ""
-      , visibleCircles = Array.fromList [ initialCircle ]
+      , visibleCircles = Array.empty
       , paused = False
       }
-    , Cmd.none
+    , Random.generate AddCircle (Circle.generate imageConfig)
     )
 
 
@@ -94,22 +94,28 @@ type Msg
     | PrintFoo
     | GetSvg
     | UpdateImageConfig ImageConfig.Msg
+    | AddCircle Circle
 
 
 step : Model -> CircleUpdate -> Model
 step model circleUpdate =
-    let
-        updatedCircle =
-            Circle.updateCircle model.imageConfig circleUpdate model.activeCircle
-    in
-    { model
-        | activeCircle = updatedCircle
-        , visibleCircles =
-            Array.push
-                updatedCircle
-                model.visibleCircles
-                |> Array.sliceFrom (-1 * model.imageConfig.maxCircles)
-    }
+    case model.activeCircles of
+        [] ->
+            model
+
+        hd :: tl ->
+            let
+                updatedCircle =
+                    Circle.updateCircle model.imageConfig circleUpdate hd
+            in
+            { model
+                | activeCircles = tl ++ [ updatedCircle ]
+                , visibleCircles =
+                    Array.push
+                        updatedCircle
+                        model.visibleCircles
+                        |> Array.sliceFrom (-1 * model.imageConfig.maxCircles)
+            }
 
 
 downloadSvg : String -> Cmd Msg
@@ -148,6 +154,14 @@ update msg model =
                 | imageConfig =
                     ImageConfig.update imageConfigUpdate
                         model.imageConfig
+              }
+            , Cmd.none
+            )
+
+        AddCircle circle ->
+            ( { model
+                | activeCircles = model.activeCircles ++ [ circle ]
+                , visibleCircles = Array.push circle model.visibleCircles
               }
             , Cmd.none
             )
