@@ -5453,6 +5453,9 @@ var $elm$random$Random$generate = F2(
 var $author$project$ImageConfig$UpdateMaxCircles = function (a) {
 	return {$: 'UpdateMaxCircles', a: a};
 };
+var $author$project$ImageConfig$UpdateOpacity = function (a) {
+	return {$: 'UpdateOpacity', a: a};
+};
 var $author$project$ImageConfig$UpdatePositionDelta = function (a) {
 	return {$: 'UpdatePositionDelta', a: a};
 };
@@ -5483,6 +5486,9 @@ var $author$project$ImageConfig$init = function (_v0) {
 		maxCircles: 1000,
 		maxCirclesSlider: $carwow$elm_slider$SingleSlider$init(
 			{max: 10000, min: 1, onChange: $author$project$ImageConfig$UpdateMaxCircles, step: 100, value: 500}),
+		opacity: 1,
+		opacitySlider: $carwow$elm_slider$SingleSlider$init(
+			{max: 1, min: 0, onChange: $author$project$ImageConfig$UpdateOpacity, step: 0.05, value: 1}),
 		positionDelta: 5,
 		positionDeltaSlider: $carwow$elm_slider$SingleSlider$init(
 			{max: 100, min: 0, onChange: $author$project$ImageConfig$UpdatePositionDelta, step: 1, value: 5}),
@@ -6198,7 +6204,7 @@ var $author$project$ImageConfig$update = F2(
 					imageConfig,
 					{
 						positionDelta: value,
-						positionDeltaSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.positionDeltaSlider)
+						positionDeltaSlider: A2($carwow$elm_slider$SingleSlider$update, value, imageConfig.positionDeltaSlider)
 					});
 			case 'UpdateMaxCircles':
 				var new_value = msg.a;
@@ -6207,16 +6213,24 @@ var $author$project$ImageConfig$update = F2(
 					imageConfig,
 					{
 						maxCircles: value,
-						maxCirclesSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.maxCirclesSlider)
+						maxCirclesSlider: A2($carwow$elm_slider$SingleSlider$update, value, imageConfig.maxCirclesSlider)
 					});
-			default:
+			case 'UpdateRadius':
 				var new_value = msg.a;
 				var value = $elm$core$Basics$round(new_value);
 				return _Utils_update(
 					imageConfig,
 					{
 						radius: value,
-						radiusSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.radiusSlider)
+						radiusSlider: A2($carwow$elm_slider$SingleSlider$update, value, imageConfig.radiusSlider)
+					});
+			default:
+				var value = msg.a;
+				return _Utils_update(
+					imageConfig,
+					{
+						opacity: value,
+						opacitySlider: A2($carwow$elm_slider$SingleSlider$update, value, imageConfig.opacitySlider)
 					});
 		}
 	});
@@ -6370,9 +6384,10 @@ var $author$project$Circle$internalColorToCssColor = function (color) {
 var $author$project$Circle$fillColor = function (circle) {
 	return $author$project$Circle$internalColorToCssColor(circle.color);
 };
+var $elm$svg$Svg$Attributes$fillOpacity = _VirtualDom_attribute('fill-opacity');
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
 var $author$project$Main$viewCircle = F2(
-	function (radius, c) {
+	function (imageConfig, c) {
 		return A2(
 			$elm$svg$Svg$circle,
 			_List_fromArray(
@@ -6382,16 +6397,18 @@ var $author$project$Main$viewCircle = F2(
 					$elm$svg$Svg$Attributes$cy(
 					$elm$core$String$fromInt(c.position.y)),
 					$elm$svg$Svg$Attributes$r(
-					$elm$core$String$fromInt(radius)),
+					$elm$core$String$fromInt(imageConfig.radius)),
 					$elm$svg$Svg$Attributes$fill(
-					$author$project$Circle$fillColor(c))
+					$author$project$Circle$fillColor(c)),
+					$elm$svg$Svg$Attributes$fillOpacity(
+					$elm$core$String$fromFloat(imageConfig.opacity))
 				]),
 			_List_Nil);
 	});
 var $author$project$Main$pixels = function (model) {
 	return A2(
 		$elm$core$List$map,
-		$author$project$Main$viewCircle(model.imageConfig.radius),
+		$author$project$Main$viewCircle(model.imageConfig),
 		$elm$core$Array$toList(model.visibleCircles));
 };
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
@@ -7066,7 +7083,8 @@ var $author$project$ImageConfig$view = function (imageConfig) {
 			[
 				$carwow$elm_slider$SingleSlider$view(imageConfig.positionDeltaSlider),
 				$carwow$elm_slider$SingleSlider$view(imageConfig.maxCirclesSlider),
-				$carwow$elm_slider$SingleSlider$view(imageConfig.radiusSlider)
+				$carwow$elm_slider$SingleSlider$view(imageConfig.radiusSlider),
+				$carwow$elm_slider$SingleSlider$view(imageConfig.opacitySlider)
 			]));
 };
 var $author$project$Main$view = function (model) {

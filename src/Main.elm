@@ -23,7 +23,7 @@ import Html.Events exposing (onClick)
 import ImageConfig exposing (ImageConfig)
 import Random
 import Svg exposing (circle, svg)
-import Svg.Attributes exposing (color, cx, cy, fill, height, r, stroke, strokeWidth, viewBox, width)
+import Svg.Attributes exposing (color, cx, cy, fill, fillOpacity, height, r, stroke, strokeWidth, viewBox, width)
 
 
 
@@ -203,19 +203,20 @@ view model =
         ]
 
 
-viewCircle : Int -> Circle -> Svg.Svg msg
-viewCircle radius c =
+viewCircle : ImageConfig -> Circle -> Svg.Svg msg
+viewCircle imageConfig c =
     circle
         [ cx (String.fromInt c.position.x)
         , cy (String.fromInt c.position.y)
-        , r (String.fromInt radius)
+        , r (String.fromInt imageConfig.radius)
         , fill (Circle.fillColor c)
+        , fillOpacity (String.fromFloat imageConfig.opacity)
         ]
         []
 
 
 pixels model =
-    Array.toList model.visibleCircles |> List.map (viewCircle model.imageConfig.radius)
+    Array.toList model.visibleCircles |> List.map (viewCircle model.imageConfig)
 
 
 modelToSvg model =

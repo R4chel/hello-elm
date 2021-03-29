@@ -15,9 +15,11 @@ type alias ImageConfig =
     , positionDelta : Int
     , maxCircles : Int
     , radius : Int
+    , opacity : Float
     , positionDeltaSlider : SingleSlider Msg
     , maxCirclesSlider : SingleSlider Msg
     , radiusSlider : SingleSlider Msg
+    , opacitySlider : SingleSlider Msg
     }
 
 
@@ -33,9 +35,11 @@ init () =
     , positionDelta = 5
     , maxCircles = 1000
     , radius = 5
+    , opacity = 1
     , positionDeltaSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdatePositionDelta, step = 1 }
     , maxCirclesSlider = SingleSlider.init { min = 1, max = 10000, value = 500, onChange = UpdateMaxCircles, step = 100 }
     , radiusSlider = SingleSlider.init { min = 1, max = 100, value = 5, onChange = UpdateRadius, step = 1 }
+    , opacitySlider = SingleSlider.init { min = 0, max = 1, value = 1, onChange = UpdateOpacity, step = 0.05 }
     }
 
 
@@ -47,6 +51,7 @@ type Msg
     = UpdatePositionDelta Float
     | UpdateMaxCircles Float
     | UpdateRadius Float
+    | UpdateOpacity Float
 
 
 update : Msg -> ImageConfig -> ImageConfig
@@ -59,7 +64,7 @@ update msg imageConfig =
             in
             { imageConfig
                 | positionDelta = value
-                , positionDeltaSlider = SingleSlider.update new_value imageConfig.positionDeltaSlider
+                , positionDeltaSlider = SingleSlider.update (Basics.toFloat value) imageConfig.positionDeltaSlider
             }
 
         UpdateMaxCircles new_value ->
@@ -69,7 +74,7 @@ update msg imageConfig =
             in
             { imageConfig
                 | maxCircles = value
-                , maxCirclesSlider = SingleSlider.update new_value imageConfig.maxCirclesSlider
+                , maxCirclesSlider = SingleSlider.update (Basics.toFloat value) imageConfig.maxCirclesSlider
             }
 
         UpdateRadius new_value ->
@@ -79,7 +84,13 @@ update msg imageConfig =
             in
             { imageConfig
                 | radius = value
-                , radiusSlider = SingleSlider.update new_value imageConfig.radiusSlider
+                , radiusSlider = SingleSlider.update (Basics.toFloat value) imageConfig.radiusSlider
+            }
+
+        UpdateOpacity value ->
+            { imageConfig
+                | opacity = value
+                , opacitySlider = SingleSlider.update value imageConfig.opacitySlider
             }
 
 
@@ -89,4 +100,9 @@ update msg imageConfig =
 
 view : ImageConfig -> Html Msg
 view imageConfig =
-    div [] [ SingleSlider.view imageConfig.positionDeltaSlider, SingleSlider.view imageConfig.maxCirclesSlider, SingleSlider.view imageConfig.radiusSlider ]
+    div []
+        [ SingleSlider.view imageConfig.positionDeltaSlider
+        , SingleSlider.view imageConfig.maxCirclesSlider
+        , SingleSlider.view imageConfig.radiusSlider
+        , SingleSlider.view imageConfig.opacitySlider
+        ]
