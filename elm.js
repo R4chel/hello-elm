@@ -6223,7 +6223,7 @@ var $author$project$Main$update = F2(
 							imageConfig: A2($author$project$ImageConfig$update, imageConfigUpdate, model.imageConfig)
 						}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'AddCircle':
 				var circle = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -6236,8 +6236,16 @@ var $author$project$Main$update = F2(
 							visibleCircles: A2($elm$core$Array$push, circle, model.visibleCircles)
 						}),
 					$elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					model,
+					A2(
+						$elm$random$Random$generate,
+						$author$project$Main$AddCircle,
+						$author$project$Circle$generate(model.imageConfig)));
 		}
 	});
+var $author$project$Main$GenerateNewCircle = {$: 'GenerateNewCircle'};
 var $author$project$Main$GetSvg = {$: 'GetSvg'};
 var $author$project$Main$TogglePaused = {$: 'TogglePaused'};
 var $author$project$Main$UpdateImageConfig = function (a) {
@@ -7034,6 +7042,16 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$text(
 						model.paused ? 'Play' : 'Pause')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$GenerateNewCircle)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('+')
 					])),
 				A2(
 				$elm$html$Html$button,

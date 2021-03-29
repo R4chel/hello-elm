@@ -95,6 +95,7 @@ type Msg
     | GetSvg
     | UpdateImageConfig ImageConfig.Msg
     | AddCircle Circle
+    | GenerateNewCircle
 
 
 step : Model -> CircleUpdate -> Model
@@ -166,6 +167,9 @@ update msg model =
             , Cmd.none
             )
 
+        GenerateNewCircle ->
+            ( model, Random.generate AddCircle (Circle.generate model.imageConfig) )
+
 
 
 -- VIEW
@@ -183,6 +187,7 @@ view model =
                     "Pause"
                 )
             ]
+        , Html.button [ onClick GenerateNewCircle ] [ Html.text "+" ]
         , Html.button [ onClick GetSvg ] [ Html.text "Download" ]
         , div [] [ ImageConfig.view model.imageConfig |> Html.map (\x -> UpdateImageConfig x) ]
         , div [] [ text model.displayText ]
