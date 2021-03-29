@@ -4,3 +4,8 @@ elm-stuff
 repl-temp-*
 
 node_modules
+
+# Generated files 
+public/elm.js
+elm.js
+index.html
