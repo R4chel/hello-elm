@@ -210,6 +210,7 @@ viewCircle imageConfig c =
         , cy (String.fromInt c.position.y)
         , r (String.fromInt imageConfig.radius)
         , fill (Circle.fillColor c)
+        , stroke (Circle.fillColor c)
         , fillOpacity (String.fromFloat imageConfig.opacity)
         ]
         []

@@ -6386,6 +6386,7 @@ var $author$project$Circle$fillColor = function (circle) {
 };
 var $elm$svg$Svg$Attributes$fillOpacity = _VirtualDom_attribute('fill-opacity');
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
+var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $author$project$Main$viewCircle = F2(
 	function (imageConfig, c) {
 		return A2(
@@ -6399,6 +6400,8 @@ var $author$project$Main$viewCircle = F2(
 					$elm$svg$Svg$Attributes$r(
 					$elm$core$String$fromInt(imageConfig.radius)),
 					$elm$svg$Svg$Attributes$fill(
+					$author$project$Circle$fillColor(c)),
+					$elm$svg$Svg$Attributes$stroke(
 					$author$project$Circle$fillColor(c)),
 					$elm$svg$Svg$Attributes$fillOpacity(
 					$elm$core$String$fromFloat(imageConfig.opacity))
