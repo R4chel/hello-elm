@@ -62,6 +62,7 @@ type alias Model =
     , displayText : String
     , visibleCircles : Array Circle
     , paused : Bool
+    , stepsPerUpdate : Int
     }
 
 
@@ -76,6 +77,7 @@ init () =
       , displayText = ""
       , visibleCircles = Array.empty
       , paused = False
+      , stepsPerUpdate = 5
       }
     , Random.generate AddCircle (Circle.generate imageConfig)
     )
@@ -137,7 +139,12 @@ update msg model =
             )
 
         ChooseDirection ->
-            ( model, Random.generate Step (Circle.randomCircleUpdate model.imageConfig) )
+            ( model
+            , Cmd.batch
+                (List.repeat model.stepsPerUpdate
+                    (Random.generate Step (Circle.randomCircleUpdate model.imageConfig))
+                )
+            )
 
         PrintFoo ->
             ( { model | displayText = model.displayText ++ " HI! " }, Cmd.none )

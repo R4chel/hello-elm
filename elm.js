@@ -5489,7 +5489,7 @@ var $author$project$ImageConfig$init = function (_v0) {
 var $author$project$Main$init = function (_v0) {
 	var imageConfig = $author$project$ImageConfig$init(_Utils_Tuple0);
 	return _Utils_Tuple2(
-		{activeCircles: _List_Nil, displayText: '', imageConfig: imageConfig, paused: false, visibleCircles: $elm$core$Array$empty},
+		{activeCircles: _List_Nil, displayText: '', imageConfig: imageConfig, paused: false, stepsPerUpdate: 5, visibleCircles: $elm$core$Array$empty},
 		A2(
 			$elm$random$Random$generate,
 			$author$project$Main$AddCircle,
@@ -5648,13 +5648,13 @@ var $author$project$Main$subscriptions = function (model) {
 var $author$project$Main$Step = function (a) {
 	return {$: 'Step', a: a};
 };
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $author$project$Main$getSvg = _Platform_outgoingPort(
 	'getSvg',
 	function ($) {
 		return $elm$json$Json$Encode$null;
 	});
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$Basics$not = _Basics_not;
 var $elm$core$Elm$JsArray$push = _JsArray_push;
@@ -5860,6 +5860,27 @@ var $author$project$Circle$randomCircleUpdate = function (imageConfig) {
 		$author$project$Direction$generator(imageConfig.positionDelta),
 		$author$project$Circle$randomColorUpdate);
 };
+var $elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2($elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var $elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
 var $elm$core$Array$length = function (_v0) {
 	var len = _v0.a;
 	return len;
@@ -6194,10 +6215,14 @@ var $author$project$Main$update = F2(
 			case 'ChooseDirection':
 				return _Utils_Tuple2(
 					model,
-					A2(
-						$elm$random$Random$generate,
-						$author$project$Main$Step,
-						$author$project$Circle$randomCircleUpdate(model.imageConfig)));
+					$elm$core$Platform$Cmd$batch(
+						A2(
+							$elm$core$List$repeat,
+							model.stepsPerUpdate,
+							A2(
+								$elm$random$Random$generate,
+								$author$project$Main$Step,
+								$author$project$Circle$randomCircleUpdate(model.imageConfig)))));
 			case 'PrintFoo':
 				return _Utils_Tuple2(
 					_Utils_update(
