@@ -203,13 +203,19 @@ view model =
         ]
 
 
-viewCircle : Circle -> Svg.Svg msg
-viewCircle c =
-    circle [ cx (String.fromInt c.position.x), cy (String.fromInt c.position.y), r (String.fromInt c.radius), fill (Circle.fillColor c) ] []
+viewCircle : Int -> Circle -> Svg.Svg msg
+viewCircle radius c =
+    circle
+        [ cx (String.fromInt c.position.x)
+        , cy (String.fromInt c.position.y)
+        , r (String.fromInt radius)
+        , fill (Circle.fillColor c)
+        ]
+        []
 
 
 pixels model =
-    Array.toList model.visibleCircles |> List.map viewCircle
+    Array.toList model.visibleCircles |> List.map (viewCircle model.imageConfig.radius)
 
 
 modelToSvg model =

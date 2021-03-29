@@ -5456,6 +5456,9 @@ var $author$project$ImageConfig$UpdateMaxCircles = function (a) {
 var $author$project$ImageConfig$UpdatePositionDelta = function (a) {
 	return {$: 'UpdatePositionDelta', a: a};
 };
+var $author$project$ImageConfig$UpdateRadius = function (a) {
+	return {$: 'UpdateRadius', a: a};
+};
 var $carwow$elm_slider$SingleSlider$SingleSlider = function (a) {
 	return {$: 'SingleSlider', a: a};
 };
@@ -5483,6 +5486,9 @@ var $author$project$ImageConfig$init = function (_v0) {
 		positionDelta: 5,
 		positionDeltaSlider: $carwow$elm_slider$SingleSlider$init(
 			{max: 100, min: 0, onChange: $author$project$ImageConfig$UpdatePositionDelta, step: 1, value: 5}),
+		radius: 5,
+		radiusSlider: $carwow$elm_slider$SingleSlider$init(
+			{max: 100, min: 1, onChange: $author$project$ImageConfig$UpdateRadius, step: 1, value: 5}),
 		width: 500
 	};
 };
@@ -6184,24 +6190,34 @@ var $carwow$elm_slider$SingleSlider$update = F2(
 	});
 var $author$project$ImageConfig$update = F2(
 	function (msg, imageConfig) {
-		if (msg.$ === 'UpdatePositionDelta') {
-			var new_value = msg.a;
-			var value = $elm$core$Basics$round(new_value);
-			return _Utils_update(
-				imageConfig,
-				{
-					positionDelta: value,
-					positionDeltaSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.positionDeltaSlider)
-				});
-		} else {
-			var new_value = msg.a;
-			var value = $elm$core$Basics$round(new_value);
-			return _Utils_update(
-				imageConfig,
-				{
-					maxCircles: value,
-					maxCirclesSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.maxCirclesSlider)
-				});
+		switch (msg.$) {
+			case 'UpdatePositionDelta':
+				var new_value = msg.a;
+				var value = $elm$core$Basics$round(new_value);
+				return _Utils_update(
+					imageConfig,
+					{
+						positionDelta: value,
+						positionDeltaSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.positionDeltaSlider)
+					});
+			case 'UpdateMaxCircles':
+				var new_value = msg.a;
+				var value = $elm$core$Basics$round(new_value);
+				return _Utils_update(
+					imageConfig,
+					{
+						maxCircles: value,
+						maxCirclesSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.maxCirclesSlider)
+					});
+			default:
+				var new_value = msg.a;
+				var value = $elm$core$Basics$round(new_value);
+				return _Utils_update(
+					imageConfig,
+					{
+						radius: value,
+						radiusSlider: A2($carwow$elm_slider$SingleSlider$update, new_value, imageConfig.radiusSlider)
+					});
 		}
 	});
 var $author$project$Main$update = F2(
@@ -6355,26 +6371,27 @@ var $author$project$Circle$fillColor = function (circle) {
 	return $author$project$Circle$internalColorToCssColor(circle.color);
 };
 var $elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
-var $author$project$Main$viewCircle = function (c) {
-	return A2(
-		$elm$svg$Svg$circle,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$cx(
-				$elm$core$String$fromInt(c.position.x)),
-				$elm$svg$Svg$Attributes$cy(
-				$elm$core$String$fromInt(c.position.y)),
-				$elm$svg$Svg$Attributes$r(
-				$elm$core$String$fromInt(c.radius)),
-				$elm$svg$Svg$Attributes$fill(
-				$author$project$Circle$fillColor(c))
-			]),
-		_List_Nil);
-};
+var $author$project$Main$viewCircle = F2(
+	function (radius, c) {
+		return A2(
+			$elm$svg$Svg$circle,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$cx(
+					$elm$core$String$fromInt(c.position.x)),
+					$elm$svg$Svg$Attributes$cy(
+					$elm$core$String$fromInt(c.position.y)),
+					$elm$svg$Svg$Attributes$r(
+					$elm$core$String$fromInt(radius)),
+					$elm$svg$Svg$Attributes$fill(
+					$author$project$Circle$fillColor(c))
+				]),
+			_List_Nil);
+	});
 var $author$project$Main$pixels = function (model) {
 	return A2(
 		$elm$core$List$map,
-		$author$project$Main$viewCircle,
+		$author$project$Main$viewCircle(model.imageConfig.radius),
 		$elm$core$Array$toList(model.visibleCircles));
 };
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
@@ -7048,7 +7065,8 @@ var $author$project$ImageConfig$view = function (imageConfig) {
 		_List_fromArray(
 			[
 				$carwow$elm_slider$SingleSlider$view(imageConfig.positionDeltaSlider),
-				$carwow$elm_slider$SingleSlider$view(imageConfig.maxCirclesSlider)
+				$carwow$elm_slider$SingleSlider$view(imageConfig.maxCirclesSlider),
+				$carwow$elm_slider$SingleSlider$view(imageConfig.radiusSlider)
 			]));
 };
 var $author$project$Main$view = function (model) {
