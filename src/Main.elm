@@ -10,17 +10,19 @@ import Array exposing (Array)
 import Array.Extra as Array
 import Base64 exposing (decode, encode)
 import Basics exposing (Float, Int, modBy)
+import BoundedDeque exposing (BoundedDeque)
 import Browser
 import Browser.Events exposing (onAnimationFrame)
 import Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, InternalColor)
 import Color exposing (Color)
+import Deque exposing (Deque)
 import Dict exposing (Dict)
 import Direction exposing (Direction)
 import File.Download as Download
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (href, id)
 import Html.Events exposing (onClick)
-import ImageConfig exposing (ImageConfig)
+import ImageConfig exposing (ImageConfig, Msg(..))
 import Random
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (color, cx, cy, fill, fillOpacity, height, r, stroke, strokeWidth, viewBox, width)
@@ -60,7 +62,7 @@ type alias Model =
     { imageConfig : ImageConfig
     , activeCircles : List Circle
     , displayText : String
-    , visibleCircles : Array Circle
+    , visibleCircles : BoundedDeque Circle
     , paused : Bool
     , stepsPerUpdate : Int
     }
@@ -75,7 +77,7 @@ init () =
     ( { imageConfig = imageConfig
       , activeCircles = []
       , displayText = ""
-      , visibleCircles = Array.empty
+      , visibleCircles = BoundedDeque.empty imageConfig.maxCircles
       , paused = False
       , stepsPerUpdate = 5
       }
@@ -114,10 +116,9 @@ step model circleUpdate =
             { model
                 | activeCircles = tl ++ [ updatedCircle ]
                 , visibleCircles =
-                    Array.push
+                    BoundedDeque.pushFront
                         updatedCircle
                         model.visibleCircles
-                        |> Array.sliceFrom (-1 * model.imageConfig.maxCircles)
             }
 
 
@@ -157,6 +158,16 @@ update msg model =
         GetSvg ->
             ( model, getSvg () )
 
+        UpdateImageConfig ((ImageConfig.UpdateMaxCircles value) as imageConfigUpdate) ->
+            ( { model
+                | imageConfig =
+                    ImageConfig.update imageConfigUpdate
+                        model.imageConfig
+                , visibleCircles = BoundedDeque.resize (\_ -> round value) model.visibleCircles
+              }
+            , Cmd.none
+            )
+
         UpdateImageConfig imageConfigUpdate ->
             ( { model
                 | imageConfig =
@@ -169,7 +180,7 @@ update msg model =
         AddCircle circle ->
             ( { model
                 | activeCircles = model.activeCircles ++ [ circle ]
-                , visibleCircles = Array.push circle model.visibleCircles
+                , visibleCircles = BoundedDeque.pushFront circle model.visibleCircles
               }
             , Cmd.none
             )
@@ -218,7 +229,7 @@ viewCircle imageConfig c =
 
 
 pixels model =
-    Array.toList model.visibleCircles |> List.map (viewCircle model.imageConfig)
+    BoundedDeque.takeBack model.imageConfig.maxCircles model.visibleCircles |> List.map (viewCircle model.imageConfig)
 
 
 modelToSvg model =
