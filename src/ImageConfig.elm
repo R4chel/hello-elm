@@ -1,10 +1,10 @@
 module ImageConfig exposing (ImageConfig, Msg, init, update, view)
 
 import Basics exposing (Float, Int)
-import Element exposing (el, layout, rgb255, text)
-import Element.Background as Background
-import Element.Border as Border
+import Element exposing (text)
 import Element.Input as Input
+import Framework exposing (layout)
+import Framework.Slider as Slider
 import Html exposing (Html, button, div)
 import SingleSlider exposing (SingleSlider)
 import Svg.Attributes exposing (strokeWidth)
@@ -120,20 +120,7 @@ update msg imageConfig =
 
 positionDeltaSlider imageConfig =
     Input.slider
-        [ Element.height (Element.px 30)
-
-        -- Here is where we're creating/styling the "track"
-        , Element.behindContent
-            (Element.el
-                [ Element.width Element.fill
-                , Element.height (Element.px 2)
-                , Element.centerY
-                , Background.color (rgb255 20 20 20)
-                , Border.rounded 2
-                ]
-                Element.none
-            )
-        ]
+        Slider.simple
         { onChange = UpdatePositionDelta
         , label =
             Input.labelAbove []
@@ -149,10 +136,13 @@ positionDeltaSlider imageConfig =
 
 view : ImageConfig -> Html Msg
 view imageConfig =
-    layout [] (positionDeltaSlider imageConfig)
+    Framework.layout [] <|
+        Element.el Framework.container <|
+            positionDeltaSlider imageConfig
 
 
 
+-- layout [] (positionDeltaSlider imageConfig)
 -- [ SingleSlider.view imageConfig.positionDeltaSlider
 -- , SingleSlider.view imageConfig.maxCirclesSlider
 -- , SingleSlider.view imageConfig.radiusSlider
