@@ -17,6 +17,7 @@
             "elm/random": "1.0.0",
             "elm/svg": "1.0.1",
             "elm-community/array-extra": "2.3.0",
+            "mdgriffith/elm-ui": "1.1.8",
             "truqu/elm-base64": "2.0.4"
         },
         "indirect": {

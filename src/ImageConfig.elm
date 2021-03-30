@@ -1,7 +1,11 @@
 module ImageConfig exposing (ImageConfig, Msg, init, update, view)
 
 import Basics exposing (Float, Int)
-import Html exposing (Html, button, div, text)
+import Element exposing (el, layout, rgb255, text)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Input as Input
+import Html exposing (Html, button, div)
 import SingleSlider exposing (SingleSlider)
 import Svg.Attributes exposing (strokeWidth)
 
@@ -114,12 +118,44 @@ update msg imageConfig =
 -- VIEW
 
 
+positionDeltaSlider imageConfig =
+    Input.slider
+        [ Element.height (Element.px 30)
+
+        -- Here is where we're creating/styling the "track"
+        , Element.behindContent
+            (Element.el
+                [ Element.width Element.fill
+                , Element.height (Element.px 2)
+                , Element.centerY
+                , Background.color (rgb255 20 20 20)
+                , Border.rounded 2
+                ]
+                Element.none
+            )
+        ]
+        { onChange = UpdatePositionDelta
+        , label =
+            Input.labelAbove []
+                (text "Position Delta")
+        , min = 0
+        , max = 75
+        , step = Just 1
+        , value = toFloat imageConfig.positionDelta
+        , thumb =
+            Input.defaultThumb
+        }
+
+
 view : ImageConfig -> Html Msg
 view imageConfig =
-    div []
-        [ SingleSlider.view imageConfig.positionDeltaSlider
-        , SingleSlider.view imageConfig.maxCirclesSlider
-        , SingleSlider.view imageConfig.radiusSlider
-        , SingleSlider.view imageConfig.opacitySlider
-        , SingleSlider.view imageConfig.strokeWidthSlider
-        ]
+    layout [] (positionDeltaSlider imageConfig)
+
+
+
+-- [ SingleSlider.view imageConfig.positionDeltaSlider
+-- , SingleSlider.view imageConfig.maxCirclesSlider
+-- , SingleSlider.view imageConfig.radiusSlider
+-- , SingleSlider.view imageConfig.opacitySlider
+-- , SingleSlider.view imageConfig.strokeWidthSlider
+-- ]

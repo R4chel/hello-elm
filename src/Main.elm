@@ -16,6 +16,7 @@ import Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, I
 import Color exposing (Color)
 import Dict exposing (Dict)
 import Direction exposing (Direction)
+import Element exposing (el, layout)
 import File.Download as Download
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (href, id)
