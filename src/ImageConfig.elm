@@ -3,6 +3,7 @@ module ImageConfig exposing (ImageConfig, Msg, init, update, view)
 import Basics exposing (Float, Int)
 import Html exposing (Html, button, div, text)
 import SingleSlider exposing (SingleSlider)
+import Svg.Attributes exposing (strokeWidth)
 
 
 
@@ -16,10 +17,12 @@ type alias ImageConfig =
     , maxCircles : Int
     , radius : Int
     , opacity : Float
+    , strokeWidth : Int
     , positionDeltaSlider : SingleSlider Msg
     , maxCirclesSlider : SingleSlider Msg
     , radiusSlider : SingleSlider Msg
     , opacitySlider : SingleSlider Msg
+    , strokeWidthSlider : SingleSlider Msg
     }
 
 
@@ -36,10 +39,12 @@ init () =
     , maxCircles = 1000
     , radius = 5
     , opacity = 1
+    , strokeWidth = 1
     , positionDeltaSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdatePositionDelta, step = 1 }
     , maxCirclesSlider = SingleSlider.init { min = 1, max = 10000, value = 500, onChange = UpdateMaxCircles, step = 100 }
     , radiusSlider = SingleSlider.init { min = 1, max = 100, value = 5, onChange = UpdateRadius, step = 1 }
     , opacitySlider = SingleSlider.init { min = 0, max = 1, value = 1, onChange = UpdateOpacity, step = 0.05 }
+    , strokeWidthSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdateStrokeWidth, step = 1 }
     }
 
 
@@ -52,6 +57,7 @@ type Msg
     | UpdateMaxCircles Float
     | UpdateRadius Float
     | UpdateOpacity Float
+    | UpdateStrokeWidth Float
 
 
 update : Msg -> ImageConfig -> ImageConfig
@@ -87,6 +93,16 @@ update msg imageConfig =
                 , radiusSlider = SingleSlider.update (Basics.toFloat value) imageConfig.radiusSlider
             }
 
+        UpdateStrokeWidth new_value ->
+            let
+                value =
+                    round new_value
+            in
+            { imageConfig
+                | strokeWidth = value
+                , strokeWidthSlider = SingleSlider.update (Basics.toFloat value) imageConfig.strokeWidthSlider
+            }
+
         UpdateOpacity value ->
             { imageConfig
                 | opacity = value
@@ -105,4 +121,5 @@ view imageConfig =
         , SingleSlider.view imageConfig.maxCirclesSlider
         , SingleSlider.view imageConfig.radiusSlider
         , SingleSlider.view imageConfig.opacitySlider
+        , SingleSlider.view imageConfig.strokeWidthSlider
         ]
