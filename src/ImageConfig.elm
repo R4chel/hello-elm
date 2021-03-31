@@ -1,7 +1,11 @@
 module ImageConfig exposing (ImageConfig, Msg(..), init, update, view)
 
 import Basics exposing (Float, Int)
-import Html exposing (Html, br, button, div, text)
+import Element exposing (Element, text)
+import Element.Input as Input
+import Framework exposing (layout)
+import Framework.Slider as Slider
+import Html exposing (Html, button, div)
 import SingleSlider exposing (SingleSlider)
 import Svg.Attributes exposing (strokeWidth)
 
@@ -19,12 +23,6 @@ type alias ImageConfig =
     , colorDelta : Int
     , opacity : Float
     , strokeWidth : Int
-    , positionDeltaSlider : SingleSlider Msg
-    , colorDeltaSlider : SingleSlider Msg
-    , maxCirclesSlider : SingleSlider Msg
-    , radiusSlider : SingleSlider Msg
-    , opacitySlider : SingleSlider Msg
-    , strokeWidthSlider : SingleSlider Msg
     }
 
 
@@ -43,12 +41,6 @@ init () =
     , radius = 5
     , opacity = 1
     , strokeWidth = 1
-    , positionDeltaSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdatePositionDelta, step = 1 }
-    , colorDeltaSlider = SingleSlider.init { min = 0, max = 30, value = 5, onChange = UpdateColorDelta, step = 1 }
-    , maxCirclesSlider = SingleSlider.init { min = 1, max = 10000, value = 500, onChange = UpdateMaxCircles, step = 100 }
-    , radiusSlider = SingleSlider.init { min = 1, max = 100, value = 5, onChange = UpdateRadius, step = 1 }
-    , opacitySlider = SingleSlider.init { min = 0, max = 1, value = 1, onChange = UpdateOpacity, step = 0.05 }
-    , strokeWidthSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdateStrokeWidth, step = 1 }
     }
 
 
@@ -68,81 +60,84 @@ type Msg
 update : Msg -> ImageConfig -> ImageConfig
 update msg imageConfig =
     case msg of
-        UpdatePositionDelta new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | positionDelta = value
-                , positionDeltaSlider = SingleSlider.update (Basics.toFloat value) imageConfig.positionDeltaSlider
-            }
+        UpdatePositionDelta value ->
+            { imageConfig | positionDelta = round value }
 
-        UpdateColorDelta new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | colorDelta = value
-                , colorDeltaSlider = SingleSlider.update (Basics.toFloat value) imageConfig.colorDeltaSlider
-            }
+        UpdateColorDelta value ->
+            { imageConfig | colorDelta = round value }
 
-        UpdateMaxCircles new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | maxCircles = value
-                , maxCirclesSlider = SingleSlider.update (Basics.toFloat value) imageConfig.maxCirclesSlider
-            }
+        UpdateMaxCircles value ->
+            { imageConfig | maxCircles = round value }
 
-        UpdateRadius new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | radius = value
-                , radiusSlider = SingleSlider.update (Basics.toFloat value) imageConfig.radiusSlider
-            }
+        UpdateRadius value ->
+            { imageConfig | radius = round value }
 
-        UpdateStrokeWidth new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | strokeWidth = value
-                , strokeWidthSlider = SingleSlider.update (Basics.toFloat value) imageConfig.strokeWidthSlider
-            }
+        UpdateStrokeWidth value ->
+            { imageConfig | strokeWidth = round value }
 
         UpdateOpacity value ->
-            { imageConfig
-                | opacity = value
-                , opacitySlider = SingleSlider.update value imageConfig.opacitySlider
-            }
+            { imageConfig | opacity = value }
 
 
 
 -- VIEW
 
 
-view : ImageConfig -> Html Msg
+view : ImageConfig -> Element Msg
 view imageConfig =
-    div []
-        [ text "Circle Count"
-        , SingleSlider.view imageConfig.maxCirclesSlider
-        , text "Position Delta"
-        , SingleSlider.view imageConfig.positionDeltaSlider
-        , text "Color Delta"
-        , SingleSlider.view imageConfig.colorDeltaSlider
-        , br [] []
-        , text "Radius"
-        , SingleSlider.view imageConfig.radiusSlider
-        , text "Opacity"
-        , SingleSlider.view imageConfig.opacitySlider
-        , text "Stroke Width"
-        , SingleSlider.view imageConfig.strokeWidthSlider
+    Element.column [ Element.height Element.fill ]
+        [ Input.slider Slider.simple
+            { onChange = UpdatePositionDelta
+            , label = Input.labelAbove [] (text "Position Delta")
+            , min = 0
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.positionDelta
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateColorDelta
+            , label = Input.labelAbove [] (text "Color Delta")
+            , min = 0
+            , max = 30
+            , step = Just 1
+            , value = toFloat imageConfig.colorDelta
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateMaxCircles
+            , label = Input.labelAbove [] (text "Max Circles")
+            , min = 1
+            , max = 10000
+            , step = Just 100
+            , value = toFloat imageConfig.maxCircles
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateRadius
+            , label = Input.labelAbove [] (text "Radius")
+            , min = 1
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.radius
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateOpacity
+            , label = Input.labelAbove [] (text "Opacity")
+            , min = 0
+            , max = 1
+            , step = Just 0.05
+            , value = imageConfig.opacity
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateStrokeWidth
+            , label = Input.labelAbove [] (text "Stroke Width")
+            , min = 0
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.strokeWidth
+            , thumb = Input.defaultThumb
+            }
         ]
