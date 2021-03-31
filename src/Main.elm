@@ -100,6 +100,7 @@ type Msg
     | UpdateImageConfig ImageConfig.Msg
     | AddCircle Circle
     | GenerateNewCircle
+    | Clear
 
 
 step : Model -> CircleUpdate -> Model
@@ -134,6 +135,14 @@ withNone model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Clear ->
+            ( { model
+                | activeCircles = []
+                , visibleCircles = BoundedDeque.empty model.imageConfig.maxCircles
+              }
+            , Cmd.none
+            )
+
         Step circleUpdate ->
             ( step model circleUpdate
             , Cmd.none
@@ -206,6 +215,7 @@ view model =
                 )
             ]
         , Html.button [ onClick GenerateNewCircle ] [ Html.text "+" ]
+        , Html.button [ onClick Clear ] [ Html.text "Clear" ]
         , Html.button [ onClick GetSvg ] [ Html.text "Download" ]
         , div [] [ ImageConfig.view model.imageConfig |> Html.map (\x -> UpdateImageConfig x) ]
         , div [] [ text model.displayText ]

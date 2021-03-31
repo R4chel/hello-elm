@@ -44,7 +44,7 @@ init () =
     , opacity = 1
     , strokeWidth = 1
     , positionDeltaSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdatePositionDelta, step = 1 }
-    , colorDeltaSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdateColorDelta, step = 1 }
+    , colorDeltaSlider = SingleSlider.init { min = 0, max = 30, value = 5, onChange = UpdateColorDelta, step = 1 }
     , maxCirclesSlider = SingleSlider.init { min = 1, max = 10000, value = 500, onChange = UpdateMaxCircles, step = 100 }
     , radiusSlider = SingleSlider.init { min = 1, max = 100, value = 5, onChange = UpdateRadius, step = 1 }
     , opacitySlider = SingleSlider.init { min = 0, max = 1, value = 1, onChange = UpdateOpacity, step = 0.05 }
