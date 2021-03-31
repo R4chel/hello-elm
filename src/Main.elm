@@ -188,30 +188,18 @@ update msg model =
 -- VIEW
 
 
-oldView : Model -> Html Msg
-oldView model =
-    div []
-        [ button [ onClick TogglePaused ]
-            [ text
-                (if model.paused then
-                    "Play"
-
-                 else
-                    "Pause"
-                )
-            ]
-        , Html.button [ onClick GenerateNewCircle ] [ Html.text "+" ]
-        , Html.button [ onClick GetSvg ] [ Html.text "Download" ]
-        , div [] [ ImageConfig.view model.imageConfig |> Html.map (\x -> UpdateImageConfig x) ]
-        , div [] [ text model.displayText ]
-        , Html.br [] []
-        , div [] [ modelToSvg model ]
-        ]
-
-
 view : Model -> Html Msg
 view model =
-    elementView model
+    Framework.layout [] <|
+        Element.el Framework.container <|
+            Element.column [ Element.spacing 5 ]
+                [ Element.row [ Element.spacing 5 ]
+                    (buttonsView
+                        model
+                    )
+                , Element.row [ Element.spacing 10 ]
+                    [ artView model, controlPanelView model ]
+                ]
 
 
 artView : Model -> Element Msg
@@ -222,7 +210,7 @@ artView model =
 controlPanelView : Model -> Element Msg
 controlPanelView model =
     Element.column [ Element.height Element.fill, Element.width Element.fill ]
-        [ ImageConfig.elementView model.imageConfig |> Element.map (\x -> UpdateImageConfig x) ]
+        [ ImageConfig.view model.imageConfig |> Element.map (\x -> UpdateImageConfig x) ]
 
 
 buttonsView : Model -> List (Element Msg)
@@ -251,20 +239,6 @@ buttonsView model =
         , label = Element.text "Download"
         }
     ]
-
-
-elementView : Model -> Html Msg
-elementView model =
-    Framework.layout [] <|
-        Element.el Framework.container <|
-            Element.column [ Element.spacing 5 ]
-                [ Element.row [ Element.spacing 5 ]
-                    (buttonsView
-                        model
-                    )
-                , Element.row [ Element.spacing 10 ]
-                    [ artView model, controlPanelView model ]
-                ]
 
 
 viewCircle : ImageConfig -> Circle -> Svg.Svg msg

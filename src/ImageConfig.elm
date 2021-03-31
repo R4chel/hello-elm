@@ -1,4 +1,4 @@
-module ImageConfig exposing (ImageConfig, Msg, elementView, init, update, view)
+module ImageConfig exposing (ImageConfig, Msg, init, update, view)
 
 import Basics exposing (Float, Int)
 import Element exposing (Element, text)
@@ -57,78 +57,28 @@ type Msg
 update : Msg -> ImageConfig -> ImageConfig
 update msg imageConfig =
     case msg of
-        UpdatePositionDelta new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | positionDelta = value
-            }
+        UpdatePositionDelta value ->
+            { imageConfig | positionDelta = round value }
 
-        UpdateMaxCircles new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | maxCircles = value
-            }
+        UpdateMaxCircles value ->
+            { imageConfig | maxCircles = round value }
 
-        UpdateRadius new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | radius = value
-            }
+        UpdateRadius value ->
+            { imageConfig | radius = round value }
 
-        UpdateStrokeWidth new_value ->
-            let
-                value =
-                    round new_value
-            in
-            { imageConfig
-                | strokeWidth = value
-            }
+        UpdateStrokeWidth value ->
+            { imageConfig | strokeWidth = round value }
 
         UpdateOpacity value ->
-            { imageConfig
-                | opacity = value
-            }
+            { imageConfig | opacity = value }
 
 
 
 -- VIEW
 
 
-positionDeltaSlider : ImageConfig -> Element Msg
-positionDeltaSlider imageConfig =
-    Input.slider
-        Slider.simple
-        { onChange = UpdatePositionDelta
-        , label =
-            Input.labelAbove []
-                (text "Position Delta")
-        , min = 0
-        , max = 75
-        , step = Just 1
-        , value = toFloat imageConfig.positionDelta
-        , thumb =
-            Input.defaultThumb
-        }
-
-
-view : ImageConfig -> Html Msg
+view : ImageConfig -> Element Msg
 view imageConfig =
-    Framework.layout [] <|
-        Element.el Framework.container <|
-            positionDeltaSlider imageConfig
-
-
-elementView : ImageConfig -> Element Msg
-elementView imageConfig =
     Element.column [ Element.height Element.fill ]
         [ Input.slider Slider.simple
             { onChange = UpdatePositionDelta
