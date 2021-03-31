@@ -18,6 +18,8 @@ import Dict exposing (Dict)
 import Direction exposing (Direction)
 import Element exposing (el, layout)
 import File.Download as Download
+import Framework exposing (layout)
+import Framework.Slider as Slider
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (href, id)
 import Html.Events exposing (onClick)
@@ -183,8 +185,8 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
+oldView : Model -> Html Msg
+oldView model =
     div []
         [ button [ onClick TogglePaused ]
             [ text
@@ -202,6 +204,18 @@ view model =
         , Html.br [] []
         , div [] [ modelToSvg model ]
         ]
+
+
+view : Model -> Html Msg
+view model =
+    elementView model
+
+
+elementView : Model -> Html Msg
+elementView model =
+    Framework.layout [] <|
+        Element.el Framework.container <|
+            Element.html (modelToSvg model)
 
 
 viewCircle : ImageConfig -> Circle -> Svg.Svg msg

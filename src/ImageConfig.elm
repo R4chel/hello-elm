@@ -1,7 +1,7 @@
 module ImageConfig exposing (ImageConfig, Msg, init, update, view)
 
 import Basics exposing (Float, Int)
-import Element exposing (text)
+import Element exposing (Element, text)
 import Element.Input as Input
 import Framework exposing (layout)
 import Framework.Slider as Slider
@@ -118,6 +118,7 @@ update msg imageConfig =
 -- VIEW
 
 
+positionDeltaSlider : ImageConfig -> Element Msg
 positionDeltaSlider imageConfig =
     Input.slider
         Slider.simple
@@ -139,6 +140,11 @@ view imageConfig =
     Framework.layout [] <|
         Element.el Framework.container <|
             positionDeltaSlider imageConfig
+
+
+elementView : ImageConfig -> Element Msg
+elementView imageConfig =
+    positionDeltaSlider imageConfig
 
 
 
