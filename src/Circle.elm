@@ -14,22 +14,21 @@ type alias CircleUpdate =
     { direction : Direction, colorUpdate : ColorUpdate }
 
 
-randomColorUpdate : Random.Generator ColorUpdate
-randomColorUpdate =
+randomColorUpdate : ImageConfig -> Random.Generator ColorUpdate
+randomColorUpdate imageConfig =
+    let
+        low =
+            -1 * imageConfig.colorDelta
+    in
+    let
+        high =
+            imageConfig.colorDelta
+    in
     Random.map3
         ColorUpdate
-        (Random.uniform
-            -5
-            [ 5 ]
-        )
-        (Random.uniform
-            -5
-            [ 5 ]
-        )
-        (Random.uniform
-            -5
-            [ 5 ]
-        )
+        (Random.uniform low [ high ])
+        (Random.uniform low [ high ])
+        (Random.uniform low [ high ])
 
 
 randomCircleUpdate : ImageConfig -> Random.Generator CircleUpdate
@@ -37,7 +36,7 @@ randomCircleUpdate imageConfig =
     Random.map2
         CircleUpdate
         (Direction.generator imageConfig.positionDelta)
-        randomColorUpdate
+        (randomColorUpdate imageConfig)
 
 
 type alias Position =
