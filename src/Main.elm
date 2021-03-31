@@ -17,8 +17,11 @@ import Color exposing (Color)
 import Dict exposing (Dict)
 import Direction exposing (Direction)
 import Element exposing (Element, el, layout)
+import Element.Input as Input
 import File.Download as Download
 import Framework exposing (layout)
+import Framework.Button as Button
+import Framework.Color as FrameworkColor
 import Framework.Slider as Slider
 import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (href, id)
@@ -222,12 +225,38 @@ controlPanelView model =
         [ ImageConfig.elementView model.imageConfig |> Element.map (\x -> UpdateImageConfig x) ]
 
 
+buttonsView : Model -> List (Element Msg)
+buttonsView model =
+    let
+        buttonStyle =
+            Button.simple ++ FrameworkColor.primary
+    in
+    [ Input.button buttonStyle <|
+        { onPress = Just TogglePaused
+        , label =
+            Element.text
+                (if model.paused then
+                    "Play"
+
+                 else
+                    "Pause"
+                )
+        }
+    ]
+
+
 elementView : Model -> Html Msg
 elementView model =
     Framework.layout [] <|
         Element.el Framework.container <|
-            Element.row []
-                [ artView model, controlPanelView model ]
+            Element.column []
+                [ Element.row []
+                    (buttonsView
+                        model
+                    )
+                , Element.row [ Element.spacing 10 ]
+                    [ artView model, controlPanelView model ]
+                ]
 
 
 viewCircle : ImageConfig -> Circle -> Svg.Svg msg
