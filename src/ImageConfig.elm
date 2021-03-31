@@ -129,12 +129,52 @@ view imageConfig =
 
 elementView : ImageConfig -> Element Msg
 elementView imageConfig =
-    Element.column []
-        [ Input.slider Slider.simple { onChange = UpdatePositionDelta, label = Input.labelAbove [] (text "positionDeltaSlider"), min = 0, max = 100, step = Just 1, value = toFloat imageConfig.positionDelta, thumb = Input.defaultThumb }
-        , Input.slider Slider.simple { onChange = UpdateMaxCircles, label = Input.labelAbove [] (text "maxCirclesSlider"), min = 1, max = 10000, step = Just 100, value = toFloat imageConfig.maxCircles, thumb = Input.defaultThumb }
-        , Input.slider Slider.simple { onChange = UpdateRadius, label = Input.labelAbove [] (text "radiusSlider"), min = 1, max = 100, step = Just 1, value = toFloat imageConfig.radius, thumb = Input.defaultThumb }
-        , Input.slider Slider.simple { onChange = UpdateOpacity, label = Input.labelAbove [] (text "opacitySlider"), min = 0, max = 1, step = Just 0.05, value = imageConfig.opacity, thumb = Input.defaultThumb }
-        , Input.slider Slider.simple { onChange = UpdateStrokeWidth, label = Input.labelAbove [] (text "strokeWidthSlider"), min = 0, max = 100, step = Just 1, value = toFloat imageConfig.strokeWidth, thumb = Input.defaultThumb }
+    Element.column [ Element.height Element.fill ]
+        [ Input.slider Slider.simple
+            { onChange = UpdatePositionDelta
+            , label = Input.labelAbove [] (text "Position Delta")
+            , min = 0
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.positionDelta
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateMaxCircles
+            , label = Input.labelAbove [] (text "Max Circles")
+            , min = 1
+            , max = 10000
+            , step = Just 100
+            , value = toFloat imageConfig.maxCircles
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateRadius
+            , label = Input.labelAbove [] (text "Radius")
+            , min = 1
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.radius
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateOpacity
+            , label = Input.labelAbove [] (text "Opacity")
+            , min = 0
+            , max = 1
+            , step = Just 0.05
+            , value = imageConfig.opacity
+            , thumb = Input.defaultThumb
+            }
+        , Input.slider Slider.simple
+            { onChange = UpdateStrokeWidth
+            , label = Input.labelAbove [] (text "Stroke Width")
+            , min = 0
+            , max = 100
+            , step = Just 1
+            , value = toFloat imageConfig.strokeWidth
+            , thumb = Input.defaultThumb
+            }
         ]
 
 
