@@ -88,7 +88,7 @@ view imageConfig =
     Element.column [ Element.height Element.fill ]
         [ Input.slider Slider.simple
             { onChange = UpdatePositionDelta
-            , label = Input.labelAbove [] (text "Position Delta")
+            , label = Input.labelAbove [] (text ("Position Delta: " ++ String.fromInt imageConfig.positionDelta))
             , min = 0
             , max = 100
             , step = Just 1
@@ -97,7 +97,7 @@ view imageConfig =
             }
         , Input.slider Slider.simple
             { onChange = UpdateColorDelta
-            , label = Input.labelAbove [] (text "Color Delta")
+            , label = Input.labelAbove [] (text ("Color Delta: " ++ String.fromInt imageConfig.colorDelta))
             , min = 0
             , max = 30
             , step = Just 1
@@ -106,7 +106,7 @@ view imageConfig =
             }
         , Input.slider Slider.simple
             { onChange = UpdateMaxCircles
-            , label = Input.labelAbove [] (text "Max Circles")
+            , label = Input.labelAbove [] (text ("Max Circles: " ++ String.fromInt imageConfig.maxCircles))
             , min = 1
             , max = 10000
             , step = Just 100
@@ -115,7 +115,7 @@ view imageConfig =
             }
         , Input.slider Slider.simple
             { onChange = UpdateRadius
-            , label = Input.labelAbove [] (text "Radius")
+            , label = Input.labelAbove [] (text ("Radius: " ++ String.fromInt imageConfig.radius))
             , min = 1
             , max = 100
             , step = Just 1
@@ -124,7 +124,7 @@ view imageConfig =
             }
         , Input.slider Slider.simple
             { onChange = UpdateOpacity
-            , label = Input.labelAbove [] (text "Opacity")
+            , label = Input.labelAbove [] (text ("Opacity: " ++ String.fromFloat imageConfig.opacity))
             , min = 0
             , max = 1
             , step = Just 0.05
@@ -133,7 +133,7 @@ view imageConfig =
             }
         , Input.slider Slider.simple
             { onChange = UpdateStrokeWidth
-            , label = Input.labelAbove [] (text "Stroke Width")
+            , label = Input.labelAbove [] (text ("Stroke Width: " ++ String.fromInt imageConfig.strokeWidth))
             , min = 0
             , max = 100
             , step = Just 1
