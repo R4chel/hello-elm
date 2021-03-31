@@ -16,7 +16,7 @@ import Circle exposing (Circle, CircleUpdate, ColorUpdate, ComparablePosition, I
 import Color exposing (Color)
 import Dict exposing (Dict)
 import Direction exposing (Direction)
-import Element exposing (el, layout)
+import Element exposing (Element, el, layout)
 import File.Download as Download
 import Framework exposing (layout)
 import Framework.Slider as Slider
@@ -211,11 +211,23 @@ view model =
     elementView model
 
 
+artView : Model -> Element Msg
+artView model =
+    Element.column [ Element.height Element.fill, Element.width Element.fill ] [ Element.html (modelToSvg model) ]
+
+
+controlPanelView : Model -> Element Msg
+controlPanelView model =
+    Element.column [ Element.height Element.fill, Element.width Element.fill ]
+        [ ImageConfig.elementView model.imageConfig |> Element.map (\x -> UpdateImageConfig x) ]
+
+
 elementView : Model -> Html Msg
 elementView model =
     Framework.layout [] <|
         Element.el Framework.container <|
-            Element.html (modelToSvg model)
+            Element.row []
+                [ artView model, controlPanelView model ]
 
 
 viewCircle : ImageConfig -> Circle -> Svg.Svg msg

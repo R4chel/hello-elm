@@ -1,4 +1,4 @@
-module ImageConfig exposing (ImageConfig, Msg, init, update, view)
+module ImageConfig exposing (ImageConfig, Msg, elementView, init, update, view)
 
 import Basics exposing (Float, Int)
 import Element exposing (Element, text)
