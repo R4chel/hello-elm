@@ -22,11 +22,6 @@ type alias ImageConfig =
     , radius : Int
     , opacity : Float
     , strokeWidth : Int
-    , positionDeltaSlider : SingleSlider Msg
-    , maxCirclesSlider : SingleSlider Msg
-    , radiusSlider : SingleSlider Msg
-    , opacitySlider : SingleSlider Msg
-    , strokeWidthSlider : SingleSlider Msg
     }
 
 
@@ -44,11 +39,6 @@ init () =
     , radius = 5
     , opacity = 1
     , strokeWidth = 1
-    , positionDeltaSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdatePositionDelta, step = 1 }
-    , maxCirclesSlider = SingleSlider.init { min = 1, max = 10000, value = 500, onChange = UpdateMaxCircles, step = 100 }
-    , radiusSlider = SingleSlider.init { min = 1, max = 100, value = 5, onChange = UpdateRadius, step = 1 }
-    , opacitySlider = SingleSlider.init { min = 0, max = 1, value = 1, onChange = UpdateOpacity, step = 0.05 }
-    , strokeWidthSlider = SingleSlider.init { min = 0, max = 100, value = 5, onChange = UpdateStrokeWidth, step = 1 }
     }
 
 
@@ -74,7 +64,6 @@ update msg imageConfig =
             in
             { imageConfig
                 | positionDelta = value
-                , positionDeltaSlider = SingleSlider.update (Basics.toFloat value) imageConfig.positionDeltaSlider
             }
 
         UpdateMaxCircles new_value ->
@@ -84,7 +73,6 @@ update msg imageConfig =
             in
             { imageConfig
                 | maxCircles = value
-                , maxCirclesSlider = SingleSlider.update (Basics.toFloat value) imageConfig.maxCirclesSlider
             }
 
         UpdateRadius new_value ->
@@ -94,7 +82,6 @@ update msg imageConfig =
             in
             { imageConfig
                 | radius = value
-                , radiusSlider = SingleSlider.update (Basics.toFloat value) imageConfig.radiusSlider
             }
 
         UpdateStrokeWidth new_value ->
@@ -104,13 +91,11 @@ update msg imageConfig =
             in
             { imageConfig
                 | strokeWidth = value
-                , strokeWidthSlider = SingleSlider.update (Basics.toFloat value) imageConfig.strokeWidthSlider
             }
 
         UpdateOpacity value ->
             { imageConfig
                 | opacity = value
-                , opacitySlider = SingleSlider.update value imageConfig.opacitySlider
             }
 
 
@@ -144,7 +129,13 @@ view imageConfig =
 
 elementView : ImageConfig -> Element Msg
 elementView imageConfig =
-    positionDeltaSlider imageConfig
+    Element.column []
+        [ Input.slider Slider.simple { onChange = UpdatePositionDelta, label = Input.labelAbove [] (text "positionDeltaSlider"), min = 0, max = 100, step = Just 1, value = toFloat imageConfig.positionDelta, thumb = Input.defaultThumb }
+        , Input.slider Slider.simple { onChange = UpdateMaxCircles, label = Input.labelAbove [] (text "maxCirclesSlider"), min = 1, max = 10000, step = Just 100, value = toFloat imageConfig.maxCircles, thumb = Input.defaultThumb }
+        , Input.slider Slider.simple { onChange = UpdateRadius, label = Input.labelAbove [] (text "radiusSlider"), min = 1, max = 100, step = Just 1, value = toFloat imageConfig.radius, thumb = Input.defaultThumb }
+        , Input.slider Slider.simple { onChange = UpdateOpacity, label = Input.labelAbove [] (text "opacitySlider"), min = 0, max = 1, step = Just 0.05, value = imageConfig.opacity, thumb = Input.defaultThumb }
+        , Input.slider Slider.simple { onChange = UpdateStrokeWidth, label = Input.labelAbove [] (text "strokeWidthSlider"), min = 0, max = 100, step = Just 1, value = toFloat imageConfig.strokeWidth, thumb = Input.defaultThumb }
+        ]
 
 
 

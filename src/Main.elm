@@ -242,6 +242,14 @@ buttonsView model =
                     "Pause"
                 )
         }
+    , Input.button buttonStyle <|
+        { onPress = Just GenerateNewCircle
+        , label = Element.text "+"
+        }
+    , Input.button buttonStyle <|
+        { onPress = Just GetSvg
+        , label = Element.text "Download"
+        }
     ]
 
 
@@ -249,8 +257,8 @@ elementView : Model -> Html Msg
 elementView model =
     Framework.layout [] <|
         Element.el Framework.container <|
-            Element.column []
-                [ Element.row []
+            Element.column [ Element.spacing 5 ]
+                [ Element.row [ Element.spacing 5 ]
                     (buttonsView
                         model
                     )
