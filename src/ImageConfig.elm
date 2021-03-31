@@ -1,7 +1,7 @@
 module ImageConfig exposing (ImageConfig, Msg(..), init, update, view)
 
 import Basics exposing (Float, Int)
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, br, button, div, text)
 import SingleSlider exposing (SingleSlider)
 import Svg.Attributes exposing (strokeWidth)
 
@@ -117,9 +117,15 @@ update msg imageConfig =
 view : ImageConfig -> Html Msg
 view imageConfig =
     div []
-        [ SingleSlider.view imageConfig.positionDeltaSlider
+        [ text "Circle Count"
         , SingleSlider.view imageConfig.maxCirclesSlider
+        , text "Position Delta"
+        , SingleSlider.view imageConfig.positionDeltaSlider
+        , br [] []
+        , text "Radius"
         , SingleSlider.view imageConfig.radiusSlider
+        , text "Opacity"
         , SingleSlider.view imageConfig.opacitySlider
+        , text "Stroke Width"
         , SingleSlider.view imageConfig.strokeWidthSlider
         ]
